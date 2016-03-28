@@ -2,7 +2,7 @@ package com.naskar.fluentquery.impl;
 
 import java.lang.reflect.Method;
 
-public abstract class ConventionNamesUtils {
+public abstract class Convention {
 
 	public static String getNameFromMethod(Method m) {
 		String result = m.getName();

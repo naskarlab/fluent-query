@@ -49,4 +49,10 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 		return null;
 	}
 
+	@Override
+	public Query<T> gt(R value) {
+		conditions.add(appendValue(" > ", value));
+		return null;
+	}
+
 }

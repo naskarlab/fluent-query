@@ -47,5 +47,11 @@ public class PredicateImpl<T, R> implements Predicate<T, R> {
 		actions.add(i -> i.like(value));
 		return queryImpl;
 	}
+	
+	@Override
+	public Query<T> gt(R value) {
+		actions.add(i -> i.gt(value));
+		return queryImpl;
+	}
 
 }

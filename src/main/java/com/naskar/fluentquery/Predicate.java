@@ -6,4 +6,6 @@ public interface Predicate<T, R> {
 
 	Query<T> like(R value);
 
+	Query<T> gt(R value);
+
 }
