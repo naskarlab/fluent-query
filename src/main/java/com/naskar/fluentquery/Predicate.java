@@ -8,4 +8,6 @@ public interface Predicate<T, R> {
 
 	Query<T> gt(R value);
 
+	Query<T> lt(R value);
+
 }

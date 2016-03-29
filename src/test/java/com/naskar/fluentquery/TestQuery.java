@@ -43,8 +43,12 @@ public class TestQuery {
 	public void testTwoEntities() {
 		String expected = 
 			"select e0.name, e1.balance from Customer e0, Account e1" +
-			" where e0.name like 'r%' and e1.balance > 0.0"/* +
-			" and e1.customer_id = e0.id"*/;
+			" where e0.name like 'r%'" +
+			" and e1.balance > 0.0" +
+			" and e1.customer_id = e0.id" +
+			" and e1.customer_regionCode = e0.regionCode" +
+			" and e1.balance < e0.minBalance"
+			;
 		
 		String actual = new QueryBuilder()
 			.from(Customer.class)
@@ -54,12 +58,16 @@ public class TestQuery {
 				
 				query
 					.where(i -> i.getBalance()).gt(0.0)
-					// TODO: .and(i -> i.getCustomer().getId()).eq(parent.getId())
+						.and(i -> i.getCustomer().getId()).eq(parent.getId())
+						.and(i -> i.getCustomer().getRegionCode()).eq(parent.getRegionCode())
+						.and(i -> i.getBalance()).lt(parent.getMinBalance())
 					.select(i -> i.getBalance());
 				
 			})
 			.to(new NativeSQL())
 			;
+		
+		System.out.println(actual);
 		
 		Assert.assertEquals(expected, actual);
 	}

@@ -1,5 +1,6 @@
 package com.naskar.fluentquery;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -23,7 +24,7 @@ public class NativeSQL implements Converter<String> {
 		HolderInt level = new HolderInt();
 		level.value = 0;
 		
-		convert(queryImpl, parts, level);
+		convert(queryImpl, parts, level, null);
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -41,7 +42,7 @@ public class NativeSQL implements Converter<String> {
 		return sb.toString();
 	}
 	
-	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level) {
+	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level, List<String> parents) {
 		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(
 				createInstance(queryImpl.getClazz()));
 		
@@ -49,12 +50,20 @@ public class NativeSQL implements Converter<String> {
 		
 		convertSelect(parts.getSelect(), alias, proxy, queryImpl.getSelects());
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
-		convertWhere(parts.getWhere(), alias, proxy, queryImpl.getPredicates());
+		convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates());
 		
 		queryImpl.getFroms().forEach(i -> {
 			
+			proxy.clear();
+			i.getT2().accept(proxy.getProxy());
+			
+			List<String> parentsTmp = new ArrayList<String>();
+			for(Method m : proxy.getMethods()) {
+				parentsTmp.add(alias + Convention.getNameFromMethod(m));
+			}
+			
 			level.value++;
-			convert(i, parts, level);
+			convert(i.getT1(), parts, level, parentsTmp);
 			
 		});
 		
@@ -76,6 +85,7 @@ public class NativeSQL implements Converter<String> {
 		
 		String s = selects.stream().map(i -> {
 			
+			proxy.clear();
 			i.apply(proxy.getProxy());
 			
 			return alias + Convention.getNameFromMethod(proxy.getCalledMethod());
@@ -100,21 +110,26 @@ public class NativeSQL implements Converter<String> {
 	}
 	
 	private <T> void convertWhere(
-			StringBuilder sb, String alias, 
-			MethodRecordProxy<T> proxy, List<PredicateImpl<T, Object>> predicates) {
+			StringBuilder sb, 
+			String alias,
+			MethodRecordProxy<T> proxy,
+			List<String> parents,
+			List<PredicateImpl<T, Object>> predicates) {
 		
 		List<StringBuilder> conditions = new ArrayList<StringBuilder>();
 		
 		predicates.stream().forEach(p -> {
 			
+			proxy.clear();
 			p.getProperty().apply(proxy.getProxy());
 			
 			String name = 
-				alias +	Convention.getNameFromMethod(proxy.getCalledMethod());
+				alias +	Convention.getNameFromMethod(proxy.getMethods());
 			
 			p.getActions().forEach(action -> {
 				
 				NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name);
+				predicate.setParents(parents);
 				action.accept(predicate);
 				
 				predicate.getConditions().stream().forEach(cond -> {

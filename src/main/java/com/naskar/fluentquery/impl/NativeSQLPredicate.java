@@ -10,10 +10,15 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 
 	private String name;
 	private List<StringBuilder> conditions;
+	private List<String> parents;
 	
 	public NativeSQLPredicate(String name) {
 		this.name = name;
 		this.conditions = new ArrayList<StringBuilder>();
+	}
+	
+	public void setParents(List<String> parents) {
+		this.parents = parents;
 	}
 	
 	private StringBuilder appendValue(String op, R value) {
@@ -21,13 +26,25 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 		StringBuilder sb = new StringBuilder(name);
 		sb.append(op);
 		
-		if(value instanceof String) {
-			sb.append("'");
-			sb.append((String)value);
-			sb.append("'");
+		if(value == null) {
+
+			if(parents.isEmpty()) {
+				throw new IllegalArgumentException();
+			}
+			
+			sb.append(parents.remove(0));
 			
 		} else {
-			sb.append(value.toString());
+		
+			if(value instanceof String) {
+				sb.append("'");
+				sb.append((String)value);
+				sb.append("'");
+				
+			} else {
+				sb.append(value.toString());
+			}
+			
 		}
 		
 		return sb;
@@ -52,6 +69,12 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 	@Override
 	public Query<T> gt(R value) {
 		conditions.add(appendValue(" > ", value));
+		return null;
+	}
+	
+	@Override
+	public Query<T> lt(R value) {
+		conditions.add(appendValue(" < ", value));
 		return null;
 	}
 
