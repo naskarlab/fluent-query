@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.naskar.fluentquery.domain.Customer;
 import com.naskar.fluentquery.impl.Convention;
 import com.naskar.fluentquery.mapping.Mapping;
 
@@ -18,7 +17,7 @@ public class MappingConvention implements Convention {
 		this.maps = new HashMap<Class<?>, Mapping<?>>();
 	}
 	
-	public void add(Mapping<Customer> map) {
+	public <T> void add(Mapping<T> map) {
 		maps.put(map.getClazz(), map);
 	}
 	
