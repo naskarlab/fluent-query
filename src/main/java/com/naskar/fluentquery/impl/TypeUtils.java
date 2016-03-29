@@ -5,27 +5,27 @@ import java.util.Set;
 
 public class TypeUtils {
 
-	private static final Set<Class<?>> VALUE_TYPE = getWrapperTypes();
+	private static final Set<Class<?>> VALUE_TYPE = getValuesTypes();
 
 	public static boolean isValueType(Class<?> clazz) {
 		return VALUE_TYPE.contains(clazz);
 	}
 
-	private static Set<Class<?>> getWrapperTypes() {
-		Set<Class<?>> ret = new HashSet<Class<?>>();
+	private static Set<Class<?>> getValuesTypes() {
+		Set<Class<?>> types = new HashSet<Class<?>>();
 		
-		ret.add(Boolean.class);
-		ret.add(Character.class);
-		ret.add(Byte.class);
-		ret.add(Short.class);
-		ret.add(Integer.class);
-		ret.add(Long.class);
-		ret.add(Float.class);
-		ret.add(Double.class);
-		ret.add(Void.class);
-		ret.add(String.class);
+		types.add(Character.class);
+		types.add(String.class);
+		types.add(Boolean.class);
+		types.add(Byte.class);
+		types.add(Short.class);
+		types.add(Integer.class);
+		types.add(Long.class);
+		types.add(Float.class);
+		types.add(Double.class);
+		types.add(Void.class);
 		
-		return ret;
+		return types;
 	}
 
 }

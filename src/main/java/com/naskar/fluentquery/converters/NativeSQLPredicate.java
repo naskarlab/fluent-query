@@ -1,4 +1,4 @@
-package com.naskar.fluentquery.impl;
+package com.naskar.fluentquery.converters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 
-public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
+class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 
 	private String name;
 	private List<StringBuilder> conditions;
@@ -61,8 +61,8 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 	}
 	
 	@Override
-	public Query<T> like(R value) {
-		conditions.add(appendValue(" like ", value));
+	public Query<T> ne(R value) {
+		conditions.add(appendValue(" <> ", value));
 		return null;
 	}
 
@@ -73,8 +73,38 @@ public class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 	}
 	
 	@Override
+	public Query<T> ge(R value) {
+		conditions.add(appendValue(" >= ", value));
+		return null;
+	}
+	
+	@Override
 	public Query<T> lt(R value) {
 		conditions.add(appendValue(" < ", value));
+		return null;
+	}
+	
+	@Override
+	public Query<T> le(R value) {
+		conditions.add(appendValue(" <= ", value));
+		return null;
+	}
+	
+	@Override
+	public Query<T> like(R value) {
+		conditions.add(appendValue(" like ", value));
+		return null;
+	}
+	
+	@Override
+	public Query<T> isNull() {
+		conditions.add(new StringBuilder(" is null "));
+		return null;
+	}
+	
+	@Override
+	public Query<T> isNotNull() {
+		conditions.add(new StringBuilder(" is not null "));
 		return null;
 	}
 

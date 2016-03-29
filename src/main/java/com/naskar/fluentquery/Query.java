@@ -3,6 +3,8 @@ package com.naskar.fluentquery;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import com.naskar.fluentquery.impl.Converter;
+
 public interface Query<T> {
 	
 	<E> E to(Converter<E> converter);

@@ -3,10 +3,11 @@ package com.naskar.fluentquery;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.naskar.fluentquery.converters.NativeSQL;
 import com.naskar.fluentquery.domain.Account;
 import com.naskar.fluentquery.domain.Customer;
 
-public class TestQuery {
+public class TestNativeSimpleConventionQuery {
 	
 	@Test
 	public void testSelect() {
@@ -66,8 +67,6 @@ public class TestQuery {
 			})
 			.to(new NativeSQL())
 			;
-		
-		System.out.println(actual);
 		
 		Assert.assertEquals(expected, actual);
 	}

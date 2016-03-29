@@ -6,7 +6,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.naskar.fluentquery.Converter;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;

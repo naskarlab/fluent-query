@@ -1,4 +1,4 @@
-package com.naskar.fluentquery;
+package com.naskar.fluentquery.converters;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -6,15 +6,26 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.naskar.fluentquery.conventions.SimpleConvention;
 import com.naskar.fluentquery.impl.Convention;
+import com.naskar.fluentquery.impl.Converter;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
-import com.naskar.fluentquery.impl.NativeSQLPredicate;
 import com.naskar.fluentquery.impl.PredicateImpl;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
 
 public class NativeSQL implements Converter<String> {
+	
+	private Convention convention;
+	
+	public NativeSQL(Convention convention) {
+		this.convention = convention;
+	}
+	
+	public NativeSQL() {
+		this(new SimpleConvention());
+	}
 	
 	@Override
 	public <T> String convert(QueryImpl<T> queryImpl) {
@@ -59,7 +70,7 @@ public class NativeSQL implements Converter<String> {
 			
 			List<String> parentsTmp = new ArrayList<String>();
 			for(Method m : proxy.getMethods()) {
-				parentsTmp.add(alias + Convention.getNameFromMethod(m));
+				parentsTmp.add(alias + convention.getNameFromMethod(m));
 			}
 			
 			level.value++;
@@ -88,7 +99,7 @@ public class NativeSQL implements Converter<String> {
 			proxy.clear();
 			i.apply(proxy.getProxy());
 			
-			return alias + Convention.getNameFromMethod(proxy.getCalledMethod());
+			return alias + convention.getNameFromMethod(proxy.getCalledMethod());
 			
 		}).collect(Collectors.joining(", "));
 		
@@ -105,7 +116,7 @@ public class NativeSQL implements Converter<String> {
 			sb.append(", ");
 		}
 		
-		sb.append(Convention.getNameFromClass(clazz) + " " + 
+		sb.append(convention.getNameFromClass(clazz) + " " + 
 			alias.substring(0, alias.length()-1));
 	}
 	
@@ -124,7 +135,7 @@ public class NativeSQL implements Converter<String> {
 			p.getProperty().apply(proxy.getProxy());
 			
 			String name = 
-				alias +	Convention.getNameFromMethod(proxy.getMethods());
+				alias +	convention.getNameFromMethod(proxy.getMethods());
 			
 			p.getActions().forEach(action -> {
 				

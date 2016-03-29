@@ -41,10 +41,10 @@ public class PredicateImpl<T, R> implements Predicate<T, R> {
 		actions.add(i -> i.eq(value));
 		return queryImpl;
 	}
-
+	
 	@Override
-	public Query<T> like(R value) {
-		actions.add(i -> i.like(value));
+	public Query<T> ne(R value) {
+		actions.add(i -> i.ne(value));
 		return queryImpl;
 	}
 	
@@ -55,8 +55,38 @@ public class PredicateImpl<T, R> implements Predicate<T, R> {
 	}
 	
 	@Override
+	public Query<T> ge(R value) {
+		actions.add(i -> i.ge(value));
+		return queryImpl;
+	}
+	
+	@Override
 	public Query<T> lt(R value) {
 		actions.add(i -> i.lt(value));
+		return queryImpl;
+	}
+	
+	@Override
+	public Query<T> le(R value) {
+		actions.add(i -> i.le(value));
+		return queryImpl;
+	}
+	
+	@Override
+	public Query<T> like(R value) {
+		actions.add(i -> i.like(value));
+		return queryImpl;
+	}
+	
+	@Override
+	public Query<T> isNull() {
+		actions.add(i -> i.isNull());
+		return queryImpl;
+	}
+	
+	@Override
+	public Query<T> isNotNull() {
+		actions.add(i -> i.isNotNull());
 		return queryImpl;
 	}
 
