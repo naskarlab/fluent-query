@@ -4,12 +4,13 @@
 	<groupId>com.naskar</groupId>
 	<artifactId>fluent-query</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>0.0.1</version>
 	<name>fluent-query</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -23,4 +24,18 @@
 			<version>3.1</version>
 		</dependency>
 	</dependencies>
+	
+	<distributionManagement>
+		<repository>
+			<id>naskar-libs-release</id>
+			<name>naskar-libs-release</name>
+			<url>http://repo.naskar.com.br/dist/libs-release-local</url>
+		</repository>
+		<snapshotRepository>
+			<id>naskar-libs-snapshot</id>
+			<name>naskar-libs-snapshot</name>
+			<url>http://repo.naskar.com.br/dist/libs-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
 </project>
