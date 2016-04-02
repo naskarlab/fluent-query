@@ -8,6 +8,7 @@ public class Customer {
 	private Double minBalance;
 	private Address mainAddress;
 	private Address secondaryAddress;
+	private Customer holder;
 	
 	public Long getId() {
 		return id;
@@ -55,6 +56,14 @@ public class Customer {
 
 	public void setSecondaryAddress(Address secondaryAddress) {
 		this.secondaryAddress = secondaryAddress;
+	}
+
+	public Customer getHolder() {
+		return holder;
+	}
+
+	public void setHolder(Customer holder) {
+		this.holder = holder;
 	}
 	
 }

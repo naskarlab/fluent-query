@@ -28,6 +28,7 @@ public class MappingTest {
 					.map(i -> i.getRegionCode(), "NU_REGION_CODE")
 					.map(i -> i.getMainAddress().getId(), "CD_ADDRESS_MAIN")
 					.map(i -> i.getSecondaryAddress().getId(), "CD_ADDRESS_SECON")
+					.map(i -> i.getHolder().getId(), "CD_HOLDER")
 		);
 		
 		mc.add(
@@ -107,8 +108,6 @@ public class MappingTest {
 			.to(new NativeSQL(mc))
 			;
 		
-		System.out.println(actual);
-		
 		Assert.assertEquals(expected, actual);
 	}
 	
@@ -138,6 +137,29 @@ public class MappingTest {
 					.select(i -> i.getDescription());
 				
 			})
+			.to(new NativeSQL(mc))
+			;
+		
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testAutoAssociation() {
+		String expected = 
+				"select e0.DS_NAME, e1.DS_NAME from TB_CUSTOMER e0, TB_CUSTOMER e1"
+				+ " where e1.CD_CUSTOMER = e0.CD_HOLDER";
+		
+		String actual = new QueryBuilder()
+			.from(Customer.class)
+			.from(Customer.class, (query, parent) -> {
+				
+				query
+					.where(i -> i.getId()).eq(parent.getHolder().getId())
+					.select(i -> i.getName())
+					;
+				
+			})
+			.select(i -> i.getName())
 			.to(new NativeSQL(mc))
 			;
 		
