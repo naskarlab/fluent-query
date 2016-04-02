@@ -8,6 +8,7 @@ import com.naskar.fluentquery.QueryBuilder;
 import com.naskar.fluentquery.conventions.MappingConvention;
 import com.naskar.fluentquery.converters.NativeSQL;
 import com.naskar.fluentquery.domain.Account;
+import com.naskar.fluentquery.domain.Address;
 import com.naskar.fluentquery.domain.Customer;
 
 public class MappingTest {
@@ -25,6 +26,8 @@ public class MappingTest {
 					.map(i -> i.getName(), "DS_NAME")
 					.map(i -> i.getMinBalance(), "VL_MIN_BALANCE")
 					.map(i -> i.getRegionCode(), "NU_REGION_CODE")
+					.map(i -> i.getMainAddress().getId(), "CD_ADDRESS_MAIN")
+					.map(i -> i.getSecondaryAddress().getId(), "CD_ADDRESS_SECON")
 		);
 		
 		mc.add(
@@ -35,6 +38,13 @@ public class MappingTest {
 					.map(i -> i.getBalance(), "VL_BALANCE")
 					.map(i -> i.getCustomer().getId(), "CD_CUSTOMER")
 					.map(i -> i.getCustomer().getRegionCode(), "NU_REGION_CODE")
+		);
+		
+		mc.add(
+			new Mapping<Address>()
+				.to(Address.class, "TB_ADDRESS")
+					.map(i -> i.getId(), "CD_ADDRESS")
+					.map(i -> i.getDescription(), "DS_DESCRIPTION")
 		);
 	}
 	
@@ -96,6 +106,42 @@ public class MappingTest {
 			})
 			.to(new NativeSQL(mc))
 			;
+		
+		System.out.println(actual);
+		
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testTwoAttributesSameEntity() {
+		String expected = 
+			"select e0.DS_NAME, e1.DS_DESCRIPTION, e2.DS_DESCRIPTION" +
+			" from TB_CUSTOMER e0, TB_ADDRESS e1, TB_ADDRESS e2" +
+			" where e1.CD_ADDRESS = e0.CD_ADDRESS_MAIN" +
+			" and e2.CD_ADDRESS = e0.CD_ADDRESS_SECON"
+			;
+		
+		String actual = new QueryBuilder()
+			.from(Customer.class)
+				.select(i -> i.getName())
+			.from(Address.class, (query, parent) -> {
+				
+				query
+					.where(i -> i.getId()).eq(parent.getMainAddress().getId())
+					.select(i -> i.getDescription());
+				
+			})
+			.from(Address.class, (query, parent) -> {
+				
+				query
+					.where(i -> i.getId()).eq(parent.getSecondaryAddress().getId())
+					.select(i -> i.getDescription());
+				
+			})
+			.to(new NativeSQL(mc))
+			;
+		
+		System.out.println(actual);
 		
 		Assert.assertEquals(expected, actual);
 	}

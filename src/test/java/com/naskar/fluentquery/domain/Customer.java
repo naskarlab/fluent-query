@@ -6,6 +6,8 @@ public class Customer {
 	private String name;
 	private Long regionCode;
 	private Double minBalance;
+	private Address mainAddress;
+	private Address secondaryAddress;
 	
 	public Long getId() {
 		return id;
@@ -37,6 +39,22 @@ public class Customer {
 	
 	public void setMinBalance(Double minBalance) {
 		this.minBalance = minBalance;
+	}
+
+	public Address getMainAddress() {
+		return mainAddress;
+	}
+
+	public void setMainAddress(Address mainAddress) {
+		this.mainAddress = mainAddress;
+	}
+
+	public Address getSecondaryAddress() {
+		return secondaryAddress;
+	}
+
+	public void setSecondaryAddress(Address secondaryAddress) {
+		this.secondaryAddress = secondaryAddress;
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.naskar.fluentquery.converters;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.PredicateImpl;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
+import com.naskar.fluentquery.impl.TypeUtils;
 
 public class NativeSQL implements Converter<String> {
 	
@@ -69,16 +71,23 @@ public class NativeSQL implements Converter<String> {
 			i.getT2().accept(proxy.getProxy());
 			
 			List<String> parentsTmp = new ArrayList<String>();
-			for(Method m : proxy.getMethods()) {
-				parentsTmp.add(alias + convention.getNameFromMethod(m));
+			Iterator<Method> it = proxy.getMethods().iterator(); 
+			while(it.hasNext()) {
+				
+				Method m = null;
+				List<Method> path = new ArrayList<Method>();
+				do {
+					m = it.next();
+					path.add(m);
+				} while(!TypeUtils.isValueType(m.getReturnType()) && it.hasNext());
+				
+				parentsTmp.add(alias + convention.getNameFromMethod(path));
 			}
 			
 			level.value++;
 			convert(i.getT1(), parts, level, parentsTmp);
 			
 		});
-		
-		level.value += 10;
 	}
 	
 	private <T> T createInstance(Class<T> clazz) {
