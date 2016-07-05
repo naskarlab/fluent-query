@@ -7,6 +7,8 @@ import com.naskar.fluentquery.impl.Converter;
 
 public interface Query<T> {
 	
+	Class<T> getClazz();
+	
 	<E> E to(Converter<E> converter);
 	
 	<R> Query<T> select(Function<T, R> property);
