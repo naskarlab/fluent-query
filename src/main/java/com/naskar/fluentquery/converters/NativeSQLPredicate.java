@@ -1,6 +1,8 @@
 package com.naskar.fluentquery.converters;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.naskar.fluentquery.Predicate;
@@ -12,9 +14,12 @@ class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 	private List<StringBuilder> conditions;
 	private List<String> parents;
 	
+	private SimpleDateFormat sdf;
+	
 	public NativeSQLPredicate(String name) {
 		this.name = name;
 		this.conditions = new ArrayList<StringBuilder>();
+		this.sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss"); // SQL ANSI
 	}
 	
 	public void setParents(List<String> parents) {
@@ -39,6 +44,11 @@ class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 			if(value instanceof String) {
 				sb.append("'");
 				sb.append((String)value);
+				sb.append("'");
+				
+			} else if(value instanceof Date) {
+				sb.append("'");
+				sb.append(sdf.format((Date)value));
 				sb.append("'");
 				
 			} else {

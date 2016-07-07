@@ -12,6 +12,7 @@ import com.naskar.fluentquery.impl.Convention;
 import com.naskar.fluentquery.impl.Converter;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
+import com.naskar.fluentquery.impl.OrderByImpl;
 import com.naskar.fluentquery.impl.PredicateImpl;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
@@ -52,6 +53,11 @@ public class NativeSQL implements Converter<String> {
 			sb.append(parts.getWhere());
 		}
 		
+		if(parts.hasOrderBy()) {
+			sb.append(" order by ");
+			sb.append(parts.getOrderBy());
+		}
+		
 		return sb.toString();
 	}
 	
@@ -64,6 +70,7 @@ public class NativeSQL implements Converter<String> {
 		convertSelect(parts.getSelect(), alias, proxy, queryImpl.getSelects());
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
 		convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates());
+		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());
 		
 		queryImpl.getFroms().forEach(i -> {
 			
@@ -117,6 +124,30 @@ public class NativeSQL implements Converter<String> {
 		}
 		
 		sb.append(s.isEmpty() ? alias + "*" : s);
+	}
+	
+	private <T> void convertOrderBy(
+		StringBuilder sb, String alias,
+		MethodRecordProxy<T> proxy, 
+		List<OrderByImpl<T, ?>> orders) {
+		
+		String s = orders.stream().map(i -> {
+			
+			proxy.clear();
+			i.getProperty().apply(proxy.getProxy());
+			
+			return 
+				alias 
+				+ convention.getNameFromMethod(proxy.getCalledMethod()) 
+				+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
+			
+		}).collect(Collectors.joining(", "));
+		
+		if(sb.length() > 0) {
+			sb.append(", ");
+		}
+		
+		sb.append(s);
 	}
 	
 	private <T> void convertFrom(

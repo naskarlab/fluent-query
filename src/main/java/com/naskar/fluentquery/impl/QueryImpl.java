@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.naskar.fluentquery.OrderBy;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
@@ -16,11 +17,13 @@ public class QueryImpl<T> implements Query<T> {
 	private List<Function<T, ?>> selects;
 	private List<PredicateImpl<T, Object>> predicates;
 	private List<Tuple<QueryImpl<?>, Consumer<T>>> froms;
+	private List<OrderByImpl<T, ?>> orders;
 
 	public QueryImpl(Class<T> clazz) {
 		this.clazz = clazz;
 		this.predicates = new ArrayList<PredicateImpl<T, Object>>();
 		this.selects = new ArrayList<Function<T, ?>>();
+		this.orders = new ArrayList<OrderByImpl<T, ?>>();
 		this.froms = new ArrayList<Tuple<QueryImpl<?>, Consumer<T>>>();
 	}
 	
@@ -30,6 +33,10 @@ public class QueryImpl<T> implements Query<T> {
 	
 	public List<Function<T, ?>> getSelects() {
 		return selects;
+	}
+	
+	public List<OrderByImpl<T, ?>> getOrders() {
+		return orders;
 	}
 	
 	public List<Tuple<QueryImpl<?>, Consumer<T>>> getFroms() {
@@ -69,6 +76,13 @@ public class QueryImpl<T> implements Query<T> {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
 		predicates.add((PredicateImpl<T, Object>) p);
 		return p;
+	}
+	
+	@Override
+	public <R> OrderBy<T> orderBy(Function<T, R> property) {
+		OrderByImpl<T, R> o = new OrderByImpl<T, R>(this, property);
+		this.orders.add(o);
+		return o;
 	}
 
 }

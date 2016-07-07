@@ -20,6 +20,20 @@ public class TestNativeSimpleConventionQueryTest {
 		
 		Assert.assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testOrderBy() {
+		String expected = "select e0.* from Customer e0 order by e0.id, e0.name desc";
+		
+		String actual = new QueryBuilder()
+			.from(Customer.class)
+			.orderBy(x -> x.getId()).asc()
+			.orderBy(x -> x.getName()).desc()
+			.to(new NativeSQL())
+			;
+		
+		Assert.assertEquals(expected, actual);
+	}
 
 	@Test
 	public void testCompleteLongString() {

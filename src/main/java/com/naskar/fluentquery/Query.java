@@ -17,6 +17,8 @@ public interface Query<T> {
 
 	<R> Predicate<T, R> where(Function<T, R> property);
 
-	<R> Predicate<T, R> and(Function<T, R> property);	
+	<R> Predicate<T, R> and(Function<T, R> property);
+	
+	<R> OrderBy<T> orderBy(Function<T, R> property);
 
 }
