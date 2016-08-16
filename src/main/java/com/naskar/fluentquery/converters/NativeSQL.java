@@ -18,7 +18,7 @@ import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
 import com.naskar.fluentquery.impl.TypeUtils;
 
-public class NativeSQL implements Converter<String> {
+public class NativeSQL implements Converter<NativeSQLResult> {
 	
 	private Convention convention;
 	
@@ -31,14 +31,16 @@ public class NativeSQL implements Converter<String> {
 	}
 	
 	@Override
-	public <T> String convert(QueryImpl<T> queryImpl) {
+	public <T> NativeSQLResult convert(QueryImpl<T> queryImpl) {
+		
+		NativeSQLResult result = new NativeSQLResult();
 		
 		QueryParts parts = new QueryParts();
 		
 		HolderInt level = new HolderInt();
 		level.value = 0;
 		
-		convert(queryImpl, parts, level, null);
+		convert(queryImpl, parts, level, result, null);
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -58,10 +60,10 @@ public class NativeSQL implements Converter<String> {
 			sb.append(parts.getOrderBy());
 		}
 		
-		return sb.toString();
+		return result.sql(sb.toString());
 	}
 	
-	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level, List<String> parents) {
+	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level, NativeSQLResult result, List<String> parents) {
 		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(
 				createInstance(queryImpl.getClazz()));
 		
@@ -69,7 +71,7 @@ public class NativeSQL implements Converter<String> {
 		
 		convertSelect(parts.getSelect(), alias, proxy, queryImpl.getSelects());
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
-		convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates());
+		convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates(), result);
 		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());
 		
 		queryImpl.getFroms().forEach(i -> {
@@ -92,7 +94,7 @@ public class NativeSQL implements Converter<String> {
 			}
 			
 			level.value++;
-			convert(i.getT1(), parts, level, parentsTmp);
+			convert(i.getT1(), parts, level, result, parentsTmp);
 			
 		});
 	}
@@ -165,7 +167,8 @@ public class NativeSQL implements Converter<String> {
 			String alias,
 			MethodRecordProxy<T> proxy,
 			List<String> parents,
-			List<PredicateImpl<T, Object>> predicates) {
+			List<PredicateImpl<T, Object>> predicates,
+			NativeSQLResult result) {
 		
 		List<StringBuilder> conditions = new ArrayList<StringBuilder>();
 		
@@ -179,7 +182,7 @@ public class NativeSQL implements Converter<String> {
 			
 			p.getActions().forEach(action -> {
 				
-				NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name);
+				NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name, result);
 				predicate.setParents(parents);
 				action.accept(predicate);
 				

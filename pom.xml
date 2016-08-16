@@ -29,7 +29,7 @@
 		<repository>
 			<id>naskar-libs-release</id>
 			<name>naskar-libs-release</name>
-			<url>http://repo.naskar.com.br/dist/libs-release-local</url>
+			<url>http://repo.naskar.com.br/dist/libs-release</url>
 		</repository>
 		<!-- 
 		<repository>
@@ -40,7 +40,7 @@
 	  	<snapshotRepository>
 			<id>naskar-libs-snapshot</id>
 			<name>naskar-libs-snapshot</name>
-			<url>http://repo.naskar.com.br/dist/libs-snapshot-local</url>
+			<url>http://repo.naskar.com.br/dist/libs-snapshot</url>
 		</snapshotRepository>
 	</distributionManagement>
 	

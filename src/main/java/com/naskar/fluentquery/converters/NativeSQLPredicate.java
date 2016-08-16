@@ -1,8 +1,6 @@
 package com.naskar.fluentquery.converters;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.naskar.fluentquery.Predicate;
@@ -13,13 +11,12 @@ class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 	private String name;
 	private List<StringBuilder> conditions;
 	private List<String> parents;
+	private NativeSQLResult result;
 	
-	private SimpleDateFormat sdf;
-	
-	public NativeSQLPredicate(String name) {
+	public NativeSQLPredicate(String name, NativeSQLResult result) {
 		this.name = name;
+		this.result = result;
 		this.conditions = new ArrayList<StringBuilder>();
-		this.sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss"); // SQL ANSI
 	}
 	
 	public void setParents(List<String> parents) {
@@ -31,30 +28,16 @@ class NativeSQLPredicate<T, R> implements Predicate<T, R> {
 		StringBuilder sb = new StringBuilder(name);
 		sb.append(op);
 		
-		if(value == null) {
-
-			if(parents.isEmpty()) {
-				throw new IllegalArgumentException();
-			}
+		if(value == null && parents != null && !parents.isEmpty()) {
 			
 			sb.append(parents.remove(0));
 			
 		} else {
-		
-			if(value instanceof String) {
-				sb.append("'");
-				sb.append((String)value);
-				sb.append("'");
-				
-			} else if(value instanceof Date) {
-				sb.append("'");
-				sb.append(sdf.format((Date)value));
-				sb.append("'");
-				
-			} else {
-				sb.append(value.toString());
-			}
 			
+			String p = result.add(value);
+			sb.append(":");
+			sb.append(p);
+		
 		}
 		
 		return sb;

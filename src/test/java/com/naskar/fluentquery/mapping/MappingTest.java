@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.naskar.fluentquery.QueryBuilder;
 import com.naskar.fluentquery.conventions.MappingConvention;
 import com.naskar.fluentquery.converters.NativeSQL;
+import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.domain.Account;
 import com.naskar.fluentquery.domain.Address;
 import com.naskar.fluentquery.domain.Customer;
@@ -56,6 +57,7 @@ public class MappingTest {
 		String actual = new QueryBuilder()
 			.from(Customer.class)
 			.to(new NativeSQL(mc))
+			.sql()
 			;
 		
 		Assert.assertEquals(expected, actual);
@@ -66,9 +68,9 @@ public class MappingTest {
 		String expected = 
 			"select e0.CD_CUSTOMER, e0.DS_NAME "
 			+ "from TB_CUSTOMER e0 "
-			+ "where e0.CD_CUSTOMER = 1 and e0.DS_NAME like 'r%'";
+			+ "where e0.CD_CUSTOMER = :p0 and e0.DS_NAME like :p1";
 		
-		String actual = new QueryBuilder()
+		NativeSQLResult result = new QueryBuilder()
 			.from(Customer.class)
 			.where(i -> i.getId()).eq(1L)
 				.and(i -> i.getName()).like("r%")
@@ -76,22 +78,25 @@ public class MappingTest {
 			.select(i -> i.getName())
 			.to(new NativeSQL(mc))
 			;
+		String actual = result.sql();
 		
 		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), 1L);
+		Assert.assertEquals(result.params().get("p1"), "r%");
 	}
 	
 	@Test
 	public void testTwoEntities() {
 		String expected = 
 			"select e0.DS_NAME, e1.VL_BALANCE from TB_CUSTOMER e0, TB_ACCOUNT e1" +
-			" where e0.DS_NAME like 'r%'" +
-			" and e1.VL_BALANCE > 0.0" +
+			" where e0.DS_NAME like :p0" +
+			" and e1.VL_BALANCE > :p1" +
 			" and e1.CD_CUSTOMER = e0.CD_CUSTOMER" +
 			" and e1.NU_REGION_CODE = e0.NU_REGION_CODE" +
 			" and e1.VL_BALANCE < e0.VL_MIN_BALANCE"
 			;
 		
-		String actual = new QueryBuilder()
+		NativeSQLResult result = new QueryBuilder()
 			.from(Customer.class)
 				.where(i -> i.getName()).like("r%")
 				.select(i -> i.getName())
@@ -108,7 +113,11 @@ public class MappingTest {
 			.to(new NativeSQL(mc))
 			;
 		
+		String actual = result.sql();
+		
 		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), "r%");
+		Assert.assertEquals(result.params().get("p1"), 0.0);
 	}
 	
 	@Test
@@ -138,6 +147,7 @@ public class MappingTest {
 				
 			})
 			.to(new NativeSQL(mc))
+			.sql()
 			;
 		
 		Assert.assertEquals(expected, actual);
@@ -161,6 +171,7 @@ public class MappingTest {
 			})
 			.select(i -> i.getName())
 			.to(new NativeSQL(mc))
+			.sql()
 			;
 		
 		System.out.println(actual);
