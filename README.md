@@ -21,6 +21,22 @@ public void testSelect() {
 	String actual = new QueryBuilder()
 		.from(Customer.class)
 		.to(new NativeSQL())
+		.sql()
+		;
+	
+	Assert.assertEquals(expected, actual);
+}
+
+@Test
+public void testOrderBy() {
+	String expected = "select e0.* from Customer e0 order by e0.id, e0.name desc";
+	
+	String actual = new QueryBuilder()
+		.from(Customer.class)
+		.orderBy(x -> x.getId()).asc()
+		.orderBy(x -> x.getName()).desc()
+		.to(new NativeSQL())
+		.sql()
 		;
 	
 	Assert.assertEquals(expected, actual);
@@ -31,9 +47,9 @@ public void testCompleteLongString() {
 	String expected = 
 		"select e0.id, e0.name "
 		+ "from Customer e0 "
-		+ "where e0.id = 1 and e0.name like 'r%'";
+		+ "where e0.id = :p0 and e0.name like :p1";
 	
-	String actual = new QueryBuilder()
+	NativeSQLResult result = new QueryBuilder()
 		.from(Customer.class)
 		.where(i -> i.getId()).eq(1L)
 			.and(i -> i.getName()).like("r%")
@@ -41,22 +57,25 @@ public void testCompleteLongString() {
 		.select(i -> i.getName())
 		.to(new NativeSQL())
 		;
+	String actual = result.sql();
 	
 	Assert.assertEquals(expected, actual);
+	Assert.assertEquals(result.params().get("p0"), 1L);
+	Assert.assertEquals(result.params().get("p1"), "r%");
 }
 
 @Test
 public void testTwoEntities() {
 	String expected = 
 		"select e0.name, e1.balance from Customer e0, Account e1" +
-		" where e0.name like 'r%'" +
-		" and e1.balance > 0.0" +
+		" where e0.name like :p0" +
+		" and e1.balance > :p1" +
 		" and e1.customer_id = e0.id" +
 		" and e1.customer_regionCode = e0.regionCode" +
 		" and e1.balance < e0.minBalance"
 		;
 	
-	String actual = new QueryBuilder()
+	NativeSQLResult result = new QueryBuilder()
 		.from(Customer.class)
 			.where(i -> i.getName()).like("r%")
 			.select(i -> i.getName())
@@ -72,31 +91,18 @@ public void testTwoEntities() {
 		})
 		.to(new NativeSQL())
 		;
+	String actual = result.sql();
 	
 	Assert.assertEquals(expected, actual);
+	Assert.assertEquals(result.params().get("p0"), "r%");
+	Assert.assertEquals(result.params().get("p1"), 0.0);
 }
  
 ```
 
-## Using
+## TODO
 
-```
-<dependencies>
-	<dependency>
-		<groupId>com.naskar</groupId>
-		<artifactId>fluent-query</artifactId>
-		<version>0.0.1</version>
-	</dependency>
-</dependencies>
-<repositories>
-	<repository>
-		<snapshots>
-			<enabled>false</enabled>
-		</snapshots>
-		<id>central</id>
-		<name>libs-release</name>
-		<url>http://repo.naskar.com.br/dist/libs-release</url>
-	</repository>
-</repositories> 
-```
-
+- Conditions Or
+- Insert
+- Update
+- Delete

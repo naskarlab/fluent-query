@@ -26,22 +26,26 @@
 	</dependencies>
 	
 	<distributionManagement>
+		<!-- 
 		<repository>
 			<id>naskar-libs-release</id>
 			<name>naskar-libs-release</name>
 			<url>http://repo.naskar.com.br/dist/libs-release</url>
 		</repository>
-		<!-- 
+		 -->
+		 
 		<repository>
 	  		<id>maven-repository</id>
 	  		<url>${mvnrepo.path}</url>
 	  	</repository>
-	  	 -->
+	  	 
+	  	<!--
 	  	<snapshotRepository>
 			<id>naskar-libs-snapshot</id>
 			<name>naskar-libs-snapshot</name>
 			<url>http://repo.naskar.com.br/dist/libs-snapshot</url>
 		</snapshotRepository>
+		-->
 	</distributionManagement>
 	
 </project>
