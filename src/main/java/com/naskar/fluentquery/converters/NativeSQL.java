@@ -14,6 +14,7 @@ import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.OrderByImpl;
 import com.naskar.fluentquery.impl.PredicateImpl;
+import com.naskar.fluentquery.impl.PredicateImpl.Type;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
 import com.naskar.fluentquery.impl.TypeUtils;
@@ -171,39 +172,73 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 			NativeSQLResult result) {
 		
 		List<StringBuilder> conditions = new ArrayList<StringBuilder>();
+		List<Type> conditionTypes = new ArrayList<Type>();
 		
 		predicates.stream().forEach(p -> {
 			
-			proxy.clear();
-			p.getProperty().apply(proxy.getProxy());
+			if(p.getType() == Type.SPEC_AND || p.getType() == Type.SPEC_OR) {
+				
+				StringBuilder sbSpec = new StringBuilder("");
+				
+				@SuppressWarnings("unchecked")
+				QueryImpl<T> q = ((QueryImpl<T>)p.getProperty().apply(null));
+				
+				convertWhere(sbSpec, alias, proxy, parents, q.getPredicates(), result);
+				if(sbSpec.length() > 0) {
+					sbSpec.insert(0, "(");
+					sbSpec.append(")");
+					conditions.add(sbSpec);
+					conditionTypes.add(p.getType());
+				}
+				
+			} else {
 			
-			String name = 
-				alias +	convention.getNameFromMethod(proxy.getMethods());
-			
-			p.getActions().forEach(action -> {
+				proxy.clear();
+				p.getProperty().apply(proxy.getProxy());
 				
-				NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name, result);
-				predicate.setParents(parents);
-				action.accept(predicate);
+				String name = 
+					alias +	convention.getNameFromMethod(proxy.getMethods());
 				
-				predicate.getConditions().stream().forEach(cond -> {
-				
-					// TODO: AND
-					conditions.add(cond);
+				p.getActions().forEach(action -> {
+					
+					NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name, result);
+					predicate.setParents(parents);
+					action.accept(predicate);
+					
+					predicate.getConditions().stream().forEach(cond -> {
+					
+						conditions.add(cond);
+						conditionTypes.add(p.getType());
+						
+					});
 					
 				});
 				
-			});
+			}
 			
 		});
 		
 		if(sb.length() > 0) {
-			sb.append(" and ");
+			appendType(sb, conditionTypes.get(0));
 		}
 		
-		sb.append(conditions.stream()
-			.map(i -> i.toString())
-			.collect(Collectors.joining(" and ")));
+		for(int i = 0; i < conditions.size(); i++) {
+			if(i > 0) {
+				appendType(sb, conditionTypes.get(i));
+			}
+			
+			sb.append(conditions.get(i));
+		}
+	}
+
+	private void appendType(StringBuilder sb, Type t) {
+		if(Type.AND == t || Type.SPEC_AND == t) {
+			sb.append(" and ");
+			
+		} else if(Type.OR == t || Type.SPEC_OR == t) {
+			sb.append(" or ");
+			
+		}
 	}
 
 }

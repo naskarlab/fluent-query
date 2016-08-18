@@ -10,7 +10,7 @@ import com.naskar.fluentquery.Query;
 
 public class PredicateImpl<T, R> implements Predicate<T, R> {
 	
-	public enum Type { AND, OR };
+	public enum Type { SPEC_AND, SPEC_OR, AND, OR };
 	
 	private QueryImpl<T> queryImpl;
 	private Function<T, R> property;

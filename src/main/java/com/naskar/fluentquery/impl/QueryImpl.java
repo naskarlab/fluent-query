@@ -69,6 +69,23 @@ public class QueryImpl<T> implements Query<T> {
 	public <R> Predicate<T, R> where(Function<T, R> property) {
 		return and(property);
 	}
+	
+	@Override
+	public Query<T> whereSpec(Consumer<Query<T>> query) {
+		addSpec(query, Type.SPEC_AND);
+		return this;
+	}
+	
+	private void addSpec(Consumer<Query<T>> query, Type type) {
+		QueryImpl<T> queryImpl = new QueryImpl<T>(clazz);
+		
+		PredicateImpl<T, Object> p = new PredicateImpl<T, Object>(this, i -> {
+			query.accept(queryImpl);
+			return queryImpl;
+		}, type);
+		
+		predicates.add((PredicateImpl<T, Object>) p);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -76,6 +93,26 @@ public class QueryImpl<T> implements Query<T> {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
 		predicates.add((PredicateImpl<T, Object>) p);
 		return p;
+	}
+	
+	@Override
+	public Query<T> andSpec(Consumer<Query<T>> query) {
+		addSpec(query, Type.SPEC_AND);
+		return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <R> Predicate<T, R> or(Function<T, R> property) {
+		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.OR);
+		predicates.add((PredicateImpl<T, Object>) p);
+		return p;
+	}
+	
+	@Override
+	public Query<T> orSpec(Consumer<Query<T>> query) {
+		addSpec(query, Type.SPEC_OR);
+		return this;
 	}
 	
 	@Override

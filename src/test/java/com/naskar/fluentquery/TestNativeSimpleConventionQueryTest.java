@@ -94,29 +94,123 @@ public class TestNativeSimpleConventionQueryTest {
 		Assert.assertEquals(result.params().get("p1"), 0.0);
 	}
 	
-	// TODO: or
-	/*
 	@Test
 	public void testAndOr() {
 		String expected = 
 			"select e0.id, e0.name "
 			+ "from Customer e0 "
-			+ "where (e0.name like 'c%' or e0.name like 'r%')";
+			+ "where (e0.name like :p0 or e0.name like :p1) and e0.id = :p2";
 		
-		String actual = new QueryBuilder()
+		NativeSQLResult result = new QueryBuilder()
 			.from(Customer.class)
-			.where(e -> {
+			.whereSpec(e -> {
 				e.where(i -> i.getName()).like("c%")
 					.or(i -> i.getName()).like("r%");
+			})
+			.and(i -> i.getId()).eq(1L)
+			.select(i -> i.getId())
+			.select(i -> i.getName())
+			.to(new NativeSQL())
+			;
+		String actual = result.sql();
+		
+		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), "c%");
+		Assert.assertEquals(result.params().get("p1"), "r%");
+		Assert.assertEquals(result.params().get("p2"), 1L);
+	}
+	
+	@Test
+	public void testComplexAndOr() {
+		String expected = 
+			"select e0.id, e0.name "
+			+ "from Customer e0 "
+			+ "where e0.regionCode > :p0"
+			+ " or (e0.regionCode = :p1 and e0.name like :p2)";
+		
+		NativeSQLResult result = new QueryBuilder()
+			.from(Customer.class)
+			.where(i -> i.getRegionCode()).gt(3L)
+			.orSpec(e -> {
+				e.where(i -> i.getRegionCode()).eq(2L)
+					.and(i -> i.getName()).like("r%");
 			})
 			.select(i -> i.getId())
 			.select(i -> i.getName())
 			.to(new NativeSQL())
-			.sql()
 			;
+		String actual = result.sql();
 		
 		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), 3L);
+		Assert.assertEquals(result.params().get("p1"), 2L);
+		Assert.assertEquals(result.params().get("p2"), "r%");
 	}
-	*/
+	
+	@Test
+	public void testComplexGroupAndOr() {
+		String expected = 
+			"select e0.id, e0.name "
+			+ "from Customer e0 "
+			+ "where (e0.regionCode = :p0 and e0.name like :p1)"
+			+ " or (e0.regionCode = :p2 and e0.name like :p3)";
+		
+		NativeSQLResult result = new QueryBuilder()
+			.from(Customer.class)
+			.whereSpec(e -> {
+				e.where(i -> i.getRegionCode()).eq(1L)
+					.and(i -> i.getName()).like("c%");
+			})
+			.orSpec(e -> {
+				e.where(i -> i.getRegionCode()).eq(2L)
+					.and(i -> i.getName()).like("r%");
+			})
+			.select(i -> i.getId())
+			.select(i -> i.getName())
+			.to(new NativeSQL())
+			;
+		String actual = result.sql();
+		
+		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), 1L);
+		Assert.assertEquals(result.params().get("p1"), "c%");
+		Assert.assertEquals(result.params().get("p2"), 2L);
+		Assert.assertEquals(result.params().get("p3"), "r%");
+	}
+	
+	@Test
+	public void testComplexNestedGroupAndOr() {
+		String expected = 
+			"select e0.id, e0.name "
+			+ "from Customer e0 "
+			+ "where (e0.regionCode = :p0 and (e0.name like :p1 or e0.name like :p2))"
+			+ " or (e0.regionCode > :p3 and e0.name like :p4)";
+		
+		NativeSQLResult result = new QueryBuilder()
+			.from(Customer.class)
+			.whereSpec(e -> {
+				e.where(i -> i.getRegionCode()).eq(1L)
+					.andSpec(q -> {
+						q.where(i -> i.getName()).like("r%")
+							.or(i -> i.getName()).like("c%");
+						});
+			})
+			.orSpec(e -> {
+				e.where(i -> i.getRegionCode()).gt(1L)
+					.and(i -> i.getName()).like("d%");
+			})
+			.select(i -> i.getId())
+			.select(i -> i.getName())
+			.to(new NativeSQL())
+			;
+		String actual = result.sql();
+		
+		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), 1L);
+		Assert.assertEquals(result.params().get("p1"), "r%");
+		Assert.assertEquals(result.params().get("p2"), "c%");
+		Assert.assertEquals(result.params().get("p3"), 1L);
+		Assert.assertEquals(result.params().get("p4"), "d%");
+	}
 	
 }

@@ -102,7 +102,6 @@ public void testTwoEntities() {
 
 ## TODO
 
-- Conditions Or
 - Insert
 - Update
 - Delete
