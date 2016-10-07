@@ -31,6 +31,10 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 		this(new SimpleConvention());
 	}
 	
+	public void setConvention(Convention convention) {
+		this.convention = convention;
+	}
+	
 	@Override
 	public <T> NativeSQLResult convert(QueryImpl<T> queryImpl) {
 		
