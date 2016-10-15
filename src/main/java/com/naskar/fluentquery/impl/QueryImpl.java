@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.naskar.fluentquery.OrderBy;
 import com.naskar.fluentquery.Predicate;
@@ -92,6 +93,16 @@ public class QueryImpl<T> implements Query<T> {
 	public <R> Predicate<T, R> and(Function<T, R> property) {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
 		predicates.add((PredicateImpl<T, Object>) p);
+		return p;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <R> Predicate<T, R> andIf(Supplier<Boolean> callIf, Function<T, R> property) {
+		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
+		if(callIf.get()) {
+			predicates.add((PredicateImpl<T, Object>) p);
+		}
 		return p;
 	}
 	

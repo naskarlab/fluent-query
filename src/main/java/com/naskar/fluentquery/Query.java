@@ -3,6 +3,7 @@ package com.naskar.fluentquery;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.naskar.fluentquery.impl.Converter;
 
@@ -20,6 +21,8 @@ public interface Query<T> {
 
 	<R> Predicate<T, R> and(Function<T, R> property);
 	
+	<R> Predicate<T, R> andIf(Supplier<Boolean> callIf, Function<T, R> property);
+	
 	<R> Predicate<T, R> or(Function<T, R> property);
 	
 	Query<T> whereSpec(Consumer<Query<T>> query);
@@ -29,4 +32,5 @@ public interface Query<T> {
 	Query<T> orSpec(Consumer<Query<T>> query);
 	
 	<R> OrderBy<T> orderBy(Function<T, R> property);
+	
 }
