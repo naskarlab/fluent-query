@@ -149,11 +149,7 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 				+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
 			
 		}).collect(Collectors.joining(", "));
-		
-		if(sb.length() > 0) {
-			sb.append(", ");
-		}
-		
+				
 		sb.append(s);
 	}
 	
