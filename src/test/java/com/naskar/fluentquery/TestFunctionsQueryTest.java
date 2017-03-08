@@ -61,7 +61,7 @@ public class TestFunctionsQueryTest {
 	@Test
 	public void testCountGroupByFunction() {
 		String expected = "select to_char(e0.regionCode,'999D99S') as g, count(1) as c "
-			+ "from Customer e0 group by e0.g order by e0.g";
+			+ "from Customer e0 group by g order by g";
 		
 		String actual = new QueryBuilder()
 			.from(Customer.class)

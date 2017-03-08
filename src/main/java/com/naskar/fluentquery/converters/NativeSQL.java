@@ -191,7 +191,7 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 					
 					AliasGroupByImpl group = (AliasGroupByImpl)i;
 					
-					return alias + group.getAlias();
+					return group.getAlias();
 						
 				} else if(i instanceof AttributeGroupByImpl) {
 					
@@ -228,8 +228,7 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 					AliasOrderByImpl<?> order = (AliasOrderByImpl<?>)i;
 					
 					return 
-						alias 
-						+ order.getAlias()
+						order.getAlias()
 						+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
 						
 				} else if(i instanceof AttributeOrderByImpl) {
