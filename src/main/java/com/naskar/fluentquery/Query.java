@@ -15,6 +15,8 @@ public interface Query<T> {
 	
 	<R> Query<T> select(Function<T, R> property);
 	
+	<R> Query<T> select(Function<T, R> property, Consumer<Select> action);
+	
 	<J> Query<T> from(Class<J> clazz, BiConsumer<Query<J>, T> action);
 
 	<R> Predicate<T, R> where(Function<T, R> property);
@@ -31,6 +33,8 @@ public interface Query<T> {
 	
 	Query<T> orSpec(Consumer<Query<T>> query);
 	
-	<R> OrderBy<T> orderBy(Function<T, R> property);
+	<R> Query<T> groupBy(Function<T, R> property);
+	
+	<R> OrderBy<Query<T>> orderBy(Function<T, R> property);
 	
 }

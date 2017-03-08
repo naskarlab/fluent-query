@@ -1,7 +1,9 @@
 package com.naskar.fluentquery.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -10,21 +12,26 @@ import java.util.function.Supplier;
 import com.naskar.fluentquery.OrderBy;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
+import com.naskar.fluentquery.Select;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
 
 public class QueryImpl<T> implements Query<T> {
 	
 	private Class<T> clazz;
 	private List<Function<T, ?>> selects;
+	private Map<Function<T, ?>, Consumer<Select>> selectFunctions;
 	private List<PredicateImpl<T, Object>> predicates;
 	private List<Tuple<QueryImpl<?>, Consumer<T>>> froms;
-	private List<OrderByImpl<T, ?>> orders;
+	private List<GroupByImpl> groups;
+	private List<OrderByImpl<?>> orders;
 
 	public QueryImpl(Class<T> clazz) {
 		this.clazz = clazz;
 		this.predicates = new ArrayList<PredicateImpl<T, Object>>();
 		this.selects = new ArrayList<Function<T, ?>>();
-		this.orders = new ArrayList<OrderByImpl<T, ?>>();
+		this.selectFunctions = new HashMap<Function<T, ?>, Consumer<Select>>();
+		this.groups = new ArrayList<GroupByImpl>();
+		this.orders = new ArrayList<OrderByImpl<?>>();
 		this.froms = new ArrayList<Tuple<QueryImpl<?>, Consumer<T>>>();
 	}
 	
@@ -36,7 +43,15 @@ public class QueryImpl<T> implements Query<T> {
 		return selects;
 	}
 	
-	public List<OrderByImpl<T, ?>> getOrders() {
+	public Map<Function<T, ?>, Consumer<Select>> getSelectFunctions() {
+		return selectFunctions;
+	}
+	
+	public List<GroupByImpl> getGroups() {
+		return groups;
+	}
+	
+	public List<OrderByImpl<?>> getOrders() {
 		return orders;
 	}
 	
@@ -56,6 +71,13 @@ public class QueryImpl<T> implements Query<T> {
 	@Override
 	public <R> Query<T> select(Function<T, R> property) {
 		this.selects.add(property);
+		return this;
+	}
+	
+	@Override
+	public <R> Query<T> select(Function<T, R> property, Consumer<Select> action) {
+		this.selects.add(property);
+		this.selectFunctions.put(property, action);
 		return this;
 	}
 	
@@ -127,10 +149,32 @@ public class QueryImpl<T> implements Query<T> {
 	}
 	
 	@Override
-	public <R> OrderBy<T> orderBy(Function<T, R> property) {
-		OrderByImpl<T, R> o = new OrderByImpl<T, R>(this, property);
+	public <R> Query<T> groupBy(Function<T, R> property) {
+		GroupByImpl o = new AttributeGroupByImpl<T, R>(property);
+		this.groups.add(o);
+		return this;
+	}
+	
+	void groupBy(String alias) {
+		GroupByImpl o = new AliasGroupByImpl(alias);
+		this.groups.add(o);
+	}
+	
+	@Override
+	public <R> OrderBy<Query<T>> orderBy(Function<T, R> property) {
+		return orderBy(this, property);
+	}
+
+	<I> OrderBy<I> orderBy(I target, String alias) {
+		OrderByImpl<I> o = new AliasOrderByImpl<I>(target, alias);
 		this.orders.add(o);
 		return o;
 	}
-
+	
+	<I, R> OrderBy<I> orderBy(I target, Function<T, R> property) {
+		OrderByImpl<I> o = new AttributeOrderByImpl<I, T, R>(target, property);
+		this.orders.add(o);
+		return o;
+	}
+	
 }

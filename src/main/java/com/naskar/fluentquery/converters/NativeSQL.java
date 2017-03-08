@@ -4,12 +4,20 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.naskar.fluentquery.Select;
 import com.naskar.fluentquery.conventions.SimpleConvention;
+import com.naskar.fluentquery.impl.AliasGroupByImpl;
+import com.naskar.fluentquery.impl.AliasOrderByImpl;
+import com.naskar.fluentquery.impl.AttributeGroupByImpl;
+import com.naskar.fluentquery.impl.AttributeOrderByImpl;
 import com.naskar.fluentquery.impl.Convention;
 import com.naskar.fluentquery.impl.Converter;
+import com.naskar.fluentquery.impl.GroupByImpl;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.OrderByImpl;
@@ -17,6 +25,7 @@ import com.naskar.fluentquery.impl.PredicateImpl;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
+import com.naskar.fluentquery.impl.SelectImpl;
 import com.naskar.fluentquery.impl.TypeUtils;
 
 public class NativeSQL implements Converter<NativeSQLResult> {
@@ -60,6 +69,11 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 			sb.append(parts.getWhere());
 		}
 		
+		if(parts.hasGroupBy()) {
+			sb.append(" group by ");
+			sb.append(parts.getGroupBy());
+		}
+		
 		if(parts.hasOrderBy()) {
 			sb.append(" order by ");
 			sb.append(parts.getOrderBy());
@@ -74,9 +88,12 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 		
 		String alias = "e" + level + ".";
 		
-		convertSelect(parts.getSelect(), alias, proxy, queryImpl.getSelects());
+		convertSelect(parts.getSelect(), alias, proxy, queryImpl, 
+			queryImpl.getSelects(), queryImpl.getSelectFunctions());
+		
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
 		convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates(), result);
+		convertGroupBy(parts.getGroupBy(), alias, proxy, queryImpl.getGroups());
 		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());
 		
 		queryImpl.getFroms().forEach(i -> {
@@ -115,14 +132,20 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 	private <T> void convertSelect(
 		StringBuilder sb, String alias,
 		MethodRecordProxy<T> proxy, 
-		List<Function<T, ?>> selects) {
+		QueryImpl<T> queryImpl,
+		List<Function<T, ?>> selects,
+		Map<Function<T, ?>, Consumer<Select>> selectFunctions) {
 		
 		String s = selects.stream().map(i -> {
 			
 			proxy.clear();
 			i.apply(proxy.getProxy());
 			
-			return alias + convention.getNameFromMethod(proxy.getCalledMethod());
+			String result = alias + convention.getNameFromMethod(proxy.getCalledMethod());
+			
+			result = executeSelectFunctions(result, selectFunctions, i, queryImpl);
+			
+			return result;
 			
 		}).collect(Collectors.joining(", "));
 		
@@ -132,25 +155,104 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 		
 		sb.append(s.isEmpty() ? alias + "*" : s);
 	}
+
+	private <T> String executeSelectFunctions(
+			String column, 
+			Map<Function<T, ?>, Consumer<Select>> selectFunctions, 
+			Function<T, ?> i,
+			QueryImpl<T> queryImpl) {
+		
+		String result = column;
+		
+		Consumer<Select> actionSelect = selectFunctions.get(i); 
+		if(actionSelect != null) {
+			
+			SelectImpl<T> selectImpl = new SelectImpl<T>(queryImpl, i);
+			actionSelect.accept(selectImpl);
+			
+			Function<String, String> action = selectImpl.getAction();
+			if(action != null) {
+				result = action.apply(result) + " as " + selectImpl.getAlias();
+			}
+		}
+		
+		return result;
+	}
+	
+	private <T> void convertGroupBy(
+			StringBuilder sb, String alias,
+			MethodRecordProxy<T> proxy, 
+			List<GroupByImpl> groups) {
+		
+		if(!groups.isEmpty()) {
+			String s = groups.stream().map(i -> {
+				
+				if(i instanceof AliasGroupByImpl) {
+					
+					AliasGroupByImpl group = (AliasGroupByImpl)i;
+					
+					return alias + group.getAlias();
+						
+				} else if(i instanceof AttributeGroupByImpl) {
+					
+					@SuppressWarnings("unchecked")
+					AttributeGroupByImpl<T, ?> group = (AttributeGroupByImpl<T, ?>)i;
+					
+					proxy.clear();
+					group.getProperty().apply(proxy.getProxy());
+					
+					return 
+						alias 
+						+ convention.getNameFromMethod(proxy.getCalledMethod());
+				} else {
+					return "";
+					
+				}
+				
+			}).collect(Collectors.joining(", "));
+					
+			sb.append(s);
+		}
+	}
 	
 	private <T> void convertOrderBy(
 		StringBuilder sb, String alias,
 		MethodRecordProxy<T> proxy, 
-		List<OrderByImpl<T, ?>> orders) {
+		List<OrderByImpl<?>> orders) {
 		
-		String s = orders.stream().map(i -> {
-			
-			proxy.clear();
-			i.getProperty().apply(proxy.getProxy());
-			
-			return 
-				alias 
-				+ convention.getNameFromMethod(proxy.getCalledMethod()) 
-				+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
-			
-		}).collect(Collectors.joining(", "));
+		if(!orders.isEmpty()) {
+			String s = orders.stream().map(i -> {
 				
-		sb.append(s);
+				if(i instanceof AliasOrderByImpl) {
+					
+					AliasOrderByImpl<?> order = (AliasOrderByImpl<?>)i;
+					
+					return 
+						alias 
+						+ order.getAlias()
+						+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
+						
+				} else if(i instanceof AttributeOrderByImpl) {
+					
+					@SuppressWarnings("unchecked")
+					AttributeOrderByImpl<?, T, ?> order = (AttributeOrderByImpl<?, T, ?>)i;
+					
+					proxy.clear();
+					order.getProperty().apply(proxy.getProxy());
+					
+					return 
+						alias 
+						+ convention.getNameFromMethod(proxy.getCalledMethod()) 
+						+ (OrderByImpl.OrderByType.DESC.equals(i.getType()) ? " desc" : "");
+				} else {
+					return "";
+					
+				}
+				
+			}).collect(Collectors.joining(", "));
+					
+			sb.append(s);
+		}
 	}
 	
 	private <T> void convertFrom(

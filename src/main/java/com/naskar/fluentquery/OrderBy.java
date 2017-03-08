@@ -1,9 +1,9 @@
 package com.naskar.fluentquery;
 
-public interface OrderBy<T> {
+public interface OrderBy<I> {
 
-	Query<T> asc();
+	I asc();
 	
-	Query<T> desc();
+	I desc();
 
 }
