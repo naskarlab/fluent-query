@@ -43,6 +43,7 @@ public class NativeSQLResult {
 		return values;
 	}
 	
+	// TODO: bug: chaves usadas em dois locais
 	String add(Object value) {
 		String k = "p" + (++i);
 		params.put(k, value);
