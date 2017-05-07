@@ -31,17 +31,25 @@ import com.naskar.fluentquery.impl.TypeUtils;
 public class NativeSQL implements Converter<NativeSQLResult> {
 	
 	private Convention convention;
+	private Boolean usePropertyNameAsAlias;
 	
 	public NativeSQL(Convention convention) {
 		this.convention = convention;
+		this.usePropertyNameAsAlias = false;
 	}
 	
 	public NativeSQL() {
 		this(new SimpleConvention());
 	}
 	
-	public void setConvention(Convention convention) {
+	public NativeSQL setConvention(Convention convention) {
 		this.convention = convention;
+		return this;
+	}
+	
+	public NativeSQL setUsePropertyNameAsAlias(Boolean usePropertyNameAsAlias) {
+		this.usePropertyNameAsAlias = usePropertyNameAsAlias;
+		return this;
 	}
 	
 	@Override
@@ -141,9 +149,15 @@ public class NativeSQL implements Converter<NativeSQLResult> {
 			proxy.clear();
 			i.apply(proxy.getProxy());
 			
-			String result = alias + convention.getNameFromMethod(proxy.getCalledMethod());
+			Method m = proxy.getCalledMethod();
+			
+			String result = alias + convention.getNameFromMethod(m);
 			
 			result = executeSelectFunctions(result, selectFunctions, i, queryImpl);
+			
+			if(!(convention instanceof SimpleConvention) && usePropertyNameAsAlias != null && usePropertyNameAsAlias) {
+				result = result + " as " + SimpleConvention.getPropertyNameFromMethod(m); 
+			}
 			
 			return result;
 			

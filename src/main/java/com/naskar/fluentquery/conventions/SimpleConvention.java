@@ -24,6 +24,15 @@ public class SimpleConvention implements Convention {
 
 	@Override
 	public String getNameFromMethod(Method m) {
+		return getPropertyNameFromMethod(m);
+	}
+
+	@Override
+	public <T> String getNameFromClass(Class<T> clazz) {
+		return clazz.getSimpleName();
+	}
+	
+	public static String getPropertyNameFromMethod(Method m) {
 		String result = m.getName();
 		
 		String name = m.getName();
@@ -37,11 +46,6 @@ public class SimpleConvention implements Convention {
 		}
 		
 		return result;
-	}
-
-	@Override
-	public <T> String getNameFromClass(Class<T> clazz) {
-		return clazz.getSimpleName();
 	}
 	
 }
