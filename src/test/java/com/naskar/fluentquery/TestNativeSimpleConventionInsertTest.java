@@ -37,6 +37,19 @@ public class TestNativeSimpleConventionInsertTest {
 		
 		Assert.assertEquals(expected, actual);
 	}
+	
+	public void testInsertFields() {
+		String expected = "insert into Customer (name, date) values ('teste', '')";
+		
+		String actual = new InsertBuilder()
+			.into(Customer.class)
+				.value(i -> i.getName())
+				.value(i -> i.getDate())
+			.with(new Customer("teste", ""))
+			.to(new NativeSQL());
+		
+		Assert.assertEquals(expected, actual);
+	}
 	*/
 	
 }
