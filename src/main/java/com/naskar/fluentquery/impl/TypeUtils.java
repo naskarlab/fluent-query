@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TypeUtils {
+	
+	private TypeUtils () {
+	}
 
 	private static final Set<Class<?>> VALUE_TYPE = getValuesTypes();
 
