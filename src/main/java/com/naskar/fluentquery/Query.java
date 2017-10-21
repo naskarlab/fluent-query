@@ -19,13 +19,13 @@ public interface Query<T> {
 	
 	<J> Query<T> from(Class<J> clazz, BiConsumer<Query<J>, T> action);
 
-	<R> Predicate<T, R> where(Function<T, R> property);
+	<R> Predicate<T, R, Query<T>> where(Function<T, R> property);
 
-	<R> Predicate<T, R> and(Function<T, R> property);
+	<R> Predicate<T, R, Query<T>> and(Function<T, R> property);
 	
-	<R> Predicate<T, R> andIf(Supplier<Boolean> callIf, Function<T, R> property);
+	<R> Predicate<T, R, Query<T>> andIf(Supplier<Boolean> callIf, Function<T, R> property);
 	
-	<R> Predicate<T, R> or(Function<T, R> property);
+	<R> Predicate<T, R, Query<T>> or(Function<T, R> property);
 	
 	Query<T> whereSpec(Consumer<Query<T>> query);
 	

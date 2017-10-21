@@ -9,7 +9,7 @@ import com.naskar.fluentquery.converters.NativeSQL;
 import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.domain.Customer;
 
-public class NativeSimpleConventionQuerySpecTest {
+public class NativeQuerySpecTest {
 	
 	@Test
 	public void testSimpleSpec() {

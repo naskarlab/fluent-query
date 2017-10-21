@@ -8,20 +8,20 @@ import java.util.function.Function;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 
-public class PredicateImpl<T, R> implements Predicate<T, R> {
+public class PredicateImpl<T, R> implements Predicate<T, R, Query<T>> {
 	
 	public enum Type { SPEC_AND, SPEC_OR, AND, OR };
 	
 	private QueryImpl<T> queryImpl;
 	private Function<T, R> property;
 	private Type type;
-	private List<Consumer<Predicate<T, R>>> actions;
+	private List<Consumer<Predicate<T, R, Query<T>>>> actions;
 	
 	public PredicateImpl(QueryImpl<T> queryImpl, Function<T, R> property, Type type) {
 		this.queryImpl = queryImpl;
 		this.property = property;
 		this.type = type;
-		this.actions = new ArrayList<Consumer<Predicate<T, R>>>();
+		this.actions = new ArrayList<Consumer<Predicate<T, R, Query<T>>>>();
 	}
 	
 	public Function<T, R> getProperty() {
@@ -32,7 +32,7 @@ public class PredicateImpl<T, R> implements Predicate<T, R> {
 		return type;
 	}
 	
-	public List<Consumer<Predicate<T, R>>> getActions() {
+	public List<Consumer<Predicate<T, R, Query<T>>>> getActions() {
 		return actions;
 	}
 

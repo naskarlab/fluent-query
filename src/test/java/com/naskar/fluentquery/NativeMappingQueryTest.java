@@ -167,8 +167,6 @@ public class NativeMappingQueryTest {
 			.sql()
 			;
 		
-		System.out.println(actual);
-		
 		Assert.assertEquals(expected, actual);
 	}
 

@@ -90,7 +90,7 @@ public class QueryImpl<T> implements Query<T> {
 	}
 
 	@Override
-	public <R> Predicate<T, R> where(Function<T, R> property) {
+	public <R> Predicate<T, R, Query<T>> where(Function<T, R> property) {
 		return and(property);
 	}
 	
@@ -113,7 +113,7 @@ public class QueryImpl<T> implements Query<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <R> Predicate<T, R> and(Function<T, R> property) {
+	public <R> Predicate<T, R, Query<T>> and(Function<T, R> property) {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
 		predicates.add((PredicateImpl<T, Object>) p);
 		return p;
@@ -121,7 +121,7 @@ public class QueryImpl<T> implements Query<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <R> Predicate<T, R> andIf(Supplier<Boolean> callIf, Function<T, R> property) {
+	public <R> Predicate<T, R, Query<T>> andIf(Supplier<Boolean> callIf, Function<T, R> property) {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
 		if(callIf.get()) {
 			predicates.add((PredicateImpl<T, Object>) p);
@@ -137,7 +137,7 @@ public class QueryImpl<T> implements Query<T> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <R> Predicate<T, R> or(Function<T, R> property) {
+	public <R> Predicate<T, R, Query<T>> or(Function<T, R> property) {
 		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.OR);
 		predicates.add((PredicateImpl<T, Object>) p);
 		return p;

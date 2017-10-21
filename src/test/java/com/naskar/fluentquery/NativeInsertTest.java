@@ -7,7 +7,7 @@ import com.naskar.fluentquery.converters.NativeSQLInsertInto;
 import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.domain.Customer;
 
-public class NativeSimpleConventionInsertTest {
+public class NativeInsertTest {
 	
 	@Test
 	public void testInsert() {

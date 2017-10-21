@@ -6,7 +6,7 @@ import java.util.List;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 
-class NativeSQLPredicate<T, R> implements Predicate<T, R> {
+class NativeSQLPredicate<T, R> implements Predicate<T, R, Query<T>> {
 
 	private String name;
 	private List<StringBuilder> conditions;
