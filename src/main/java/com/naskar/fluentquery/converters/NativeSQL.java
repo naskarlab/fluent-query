@@ -16,7 +16,7 @@ import com.naskar.fluentquery.impl.AliasOrderByImpl;
 import com.naskar.fluentquery.impl.AttributeGroupByImpl;
 import com.naskar.fluentquery.impl.AttributeOrderByImpl;
 import com.naskar.fluentquery.impl.Convention;
-import com.naskar.fluentquery.impl.Converter;
+import com.naskar.fluentquery.impl.QueryConverter;
 import com.naskar.fluentquery.impl.GroupByImpl;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
@@ -28,7 +28,7 @@ import com.naskar.fluentquery.impl.QueryParts;
 import com.naskar.fluentquery.impl.SelectImpl;
 import com.naskar.fluentquery.impl.TypeUtils;
 
-public class NativeSQL implements Converter<NativeSQLResult> {
+public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	
 	private Convention convention;
 	private Boolean usePropertyNameAsAlias;

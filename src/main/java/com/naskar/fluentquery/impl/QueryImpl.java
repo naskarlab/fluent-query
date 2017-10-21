@@ -15,6 +15,7 @@ import com.naskar.fluentquery.Query;
 import com.naskar.fluentquery.Select;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
 
+// TODO: query bind dos parametros
 public class QueryImpl<T> implements Query<T> {
 	
 	private Class<T> clazz;
@@ -64,7 +65,7 @@ public class QueryImpl<T> implements Query<T> {
 	}
 	
 	@Override
-	public <E> E to(Converter<E> converter) {
+	public <E> E to(QueryConverter<E> converter) {
 		return converter.convert(this);
 	}
 	

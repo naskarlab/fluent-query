@@ -1,6 +1,6 @@
 package com.naskar.fluentquery.impl;
 
-public interface Converter<E> {
+public interface QueryConverter<E> {
 
 	<T> E convert(QueryImpl<T> queryImpl);
 

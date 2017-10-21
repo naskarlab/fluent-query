@@ -1,53 +1,24 @@
-package com.naskar.fluentquery.mapping;
+package com.naskar.fluentquery;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.naskar.fluentquery.QueryBuilder;
 import com.naskar.fluentquery.conventions.MappingConvention;
 import com.naskar.fluentquery.converters.NativeSQL;
 import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.domain.Account;
 import com.naskar.fluentquery.domain.Address;
 import com.naskar.fluentquery.domain.Customer;
+import com.naskar.fluentquery.mapping.MappingFactory;
 
-public class MappingTest {
+public class NativeMappingQueryTest {
 	
 	private MappingConvention mc;
 	
 	@Before
 	public void setup() {
-		this.mc = new MappingConvention();
-		
-		mc.add(
-			new Mapping<Customer>()
-				.to(Customer.class, "TB_CUSTOMER")
-					.map(i -> i.getId(), "CD_CUSTOMER")
-					.map(i -> i.getName(), "DS_NAME")
-					.map(i -> i.getMinBalance(), "VL_MIN_BALANCE")
-					.map(i -> i.getRegionCode(), "NU_REGION_CODE")
-					.map(i -> i.getMainAddress().getId(), "CD_ADDRESS_MAIN")
-					.map(i -> i.getSecondaryAddress().getId(), "CD_ADDRESS_SECON")
-					.map(i -> i.getHolder().getId(), "CD_HOLDER")
-		);
-		
-		mc.add(
-			new Mapping<Account>()
-				.to(Account.class, "TB_ACCOUNT")
-					.map(i -> i.getId(), "CD_ACCOUNT")
-					.map(i -> i.getAccountNumber(), "NU_ACCOUNT")
-					.map(i -> i.getBalance(), "VL_BALANCE")
-					.map(i -> i.getCustomer().getId(), "CD_CUSTOMER")
-					.map(i -> i.getCustomer().getRegionCode(), "NU_REGION_CODE")
-		);
-		
-		mc.add(
-			new Mapping<Address>()
-				.to(Address.class, "TB_ADDRESS")
-					.map(i -> i.getId(), "CD_ADDRESS")
-					.map(i -> i.getDescription(), "DS_DESCRIPTION")
-		);
+		mc = new MappingFactory().create();
 	}
 	
 	@Test

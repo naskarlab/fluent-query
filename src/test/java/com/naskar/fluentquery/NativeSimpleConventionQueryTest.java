@@ -8,7 +8,7 @@ import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.domain.Account;
 import com.naskar.fluentquery.domain.Customer;
 
-public class TestNativeSimpleConventionQueryTest {
+public class NativeSimpleConventionQueryTest {
 	
 	@Test
 	public void testSelect() {

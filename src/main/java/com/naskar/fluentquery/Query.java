@@ -5,13 +5,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.naskar.fluentquery.impl.Converter;
+import com.naskar.fluentquery.impl.QueryConverter;
 
 public interface Query<T> {
 	
 	Class<T> getClazz();
 	
-	<E> E to(Converter<E> converter);
+	<E> E to(QueryConverter<E> converter);
 	
 	<R> Query<T> select(Function<T, R> property);
 	
