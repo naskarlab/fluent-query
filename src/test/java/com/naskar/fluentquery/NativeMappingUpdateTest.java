@@ -1,24 +1,34 @@
 package com.naskar.fluentquery;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.naskar.fluentquery.conventions.MappingConvention;
 import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.converters.NativeSQLUpdate;
 import com.naskar.fluentquery.domain.Customer;
+import com.naskar.fluentquery.mapping.MappingFactory;
 
-public class NativeUpdateTest {
+public class NativeMappingUpdateTest {
+	
+	private MappingConvention mc;
+	
+	@Before
+	public void setup() {
+		mc = new MappingFactory().create();
+	}
 	
 	@Test
 	public void testInsert() {
-		String expected = "update Customer e0 set e0.name = :p0, e0.minBalance = :p1 where e0.id = :p2";
+		String expected = "update TB_CUSTOMER e0 set e0.DS_NAME = :p0, e0.VL_MIN_BALANCE = :p1 where e0.CD_CUSTOMER = :p2";
 		
 		NativeSQLResult result = new UpdateBuilder()
 			.entity(Customer.class)
 				.value(i -> i.getName()).set("teste")
 				.value(i -> i.getMinBalance()).set(10.2)
 			.where(i -> i.getId()).eq(1L)
-			.to(new NativeSQLUpdate());
+			.to(new NativeSQLUpdate(mc));
 		
 		String actual = result.sql();
 		

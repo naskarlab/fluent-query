@@ -24,6 +24,7 @@ import com.naskar.fluentquery.impl.QueryConverter;
 import com.naskar.fluentquery.impl.QueryImpl;
 import com.naskar.fluentquery.impl.QueryParts;
 import com.naskar.fluentquery.impl.SelectImpl;
+import com.naskar.fluentquery.impl.Tuple;
 import com.naskar.fluentquery.impl.TypeUtils;
 
 public class NativeSQL implements QueryConverter<NativeSQLResult> {
@@ -108,8 +109,18 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 		
 		convertGroupBy(parts.getGroupBy(), alias, proxy, queryImpl.getGroups());
 		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());
+		convertFroms(parts, alias, level, result, proxy, queryImpl.getFroms());
+	}
+
+	private <T> void convertFroms(
+			QueryParts parts, 
+			String alias, 
+			final HolderInt level,
+			NativeSQLResult result, 
+			MethodRecordProxy<T> proxy, 
+			List<Tuple<QueryImpl<?>, Consumer<T>>> froms) {
 		
-		queryImpl.getFroms().forEach(i -> {
+		froms.forEach(i -> {
 			
 			proxy.clear();
 			i.getT2().accept(proxy.getProxy());
@@ -283,6 +294,4 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 			alias.substring(0, alias.length()-1));
 	}
 	
-	
-
 }
