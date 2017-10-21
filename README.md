@@ -1,6 +1,6 @@
 # Fluent Query
 
-Create Queries using only POJO classes.  
+Create Queries, Inserts, Updates e Deletes using only POJO classes.  
 
 ## Features
 
@@ -8,7 +8,7 @@ Create Queries using only POJO classes.
 * Intrusive-less: zero or less changes for your code;
 * Glue code: it’s only a small and simple classes set;
 * Fluent Builder: code complete is your friend!
-
+* Check compiler: Refactory ? No problem. Do the compiler to work to you.
 
 ## Examples
 
@@ -97,11 +97,86 @@ public void testTwoEntities() {
 	Assert.assertEquals(result.params().get("p0"), "r%");
 	Assert.assertEquals(result.params().get("p1"), 0.0);
 }
- 
+
+@Test
+public void testInsert() {
+	String expected = "insert into Customer (id, name, minBalance) values (:p0, :p1, :p2)";
+	
+	NativeSQLResult result = new InsertBuilder()
+		.into(Customer.class)
+			.value(i -> i.getId()).set(1L)
+			.value(i -> i.getName()).set("teste")
+			.value(i -> i.getMinBalance()).set(10.2)
+		.to(new NativeSQLInsertInto());
+	
+	String actual = result.sql();
+	
+	Assert.assertEquals(expected, actual);
+	
+	Assert.assertEquals(result.params().get("p0"), 1L);
+	Assert.assertEquals(result.params().get("p1"), "teste");
+	Assert.assertEquals(result.params().get("p2"), 10.2);
+}
+
+@Test
+public void testUpdate() {
+	String expected = "update Customer e0 set e0.name = :p0, e0.minBalance = :p1 where e0.id = :p2";
+	
+	NativeSQLResult result = new UpdateBuilder()
+		.entity(Customer.class)
+			.value(i -> i.getName()).set("teste")
+			.value(i -> i.getMinBalance()).set(10.2)
+		.where(i -> i.getId()).eq(1L)
+		.to(new NativeSQLUpdate());
+	
+	String actual = result.sql();
+	
+	Assert.assertEquals(expected, actual);
+	Assert.assertEquals(result.params().get("p0"), "teste");
+	Assert.assertEquals(result.params().get("p1"), 10.2);
+	Assert.assertEquals(result.params().get("p2"), 1L);
+}
+
+@Test
+public void testDelete() {
+	String expected = "delete from Customer e0 where e0.id = :p0";
+	
+	NativeSQLResult result = new DeleteBuilder()
+		.entity(Customer.class)
+		.where(i -> i.getId()).eq(1L)
+		.to(new NativeSQLDelete());
+	
+	String actual = result.sql();
+	
+	Assert.assertEquals(expected, actual);	
+	Assert.assertEquals(result.params().get("p0"), 1L);
+}
+	 
 ```
 
-## TODO
+## Usage Maven
 
-- Insert
-- Update
-- Delete
+```
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.naskarlab</groupId>
+    <artifactId>fluent-query</artifactId>
+    <version>0.1.0</version>
+</dependency>
+
+```
+
+
+## Releases
+
+### 0.0.1 
+	- Simple Queries
+
+### 0.1.0 
+	- Insert, Update and Delete included.
