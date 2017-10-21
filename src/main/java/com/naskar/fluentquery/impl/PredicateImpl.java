@@ -6,22 +6,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.naskar.fluentquery.Predicate;
-import com.naskar.fluentquery.Query;
 
-public class PredicateImpl<T, R, B> implements Predicate<T, R, B> {
+public class PredicateImpl<T, R, I, B> implements Predicate<T, R, B> {
 	
 	public enum Type { SPEC_AND, SPEC_OR, AND, OR };
 	
 	private B impl;
 	private Function<T, R> property;
 	private Type type;
-	private List<Consumer<Predicate<T, R, Query<T>>>> actions;
+	private List<Consumer<Predicate<T, R, I>>> actions;
 	
 	public PredicateImpl(B impl, Function<T, R> property, Type type) {
 		this.impl = impl;
 		this.property = property;
 		this.type = type;
-		this.actions = new ArrayList<Consumer<Predicate<T, R, Query<T>>>>();
+		this.actions = new ArrayList<Consumer<Predicate<T, R, I>>>();
 	}
 	
 	public Function<T, R> getProperty() {
@@ -32,7 +31,7 @@ public class PredicateImpl<T, R, B> implements Predicate<T, R, B> {
 		return type;
 	}
 	
-	public List<Consumer<Predicate<T, R, Query<T>>>> getActions() {
+	public List<Consumer<Predicate<T, R, I>>> getActions() {
 		return actions;
 	}
 

@@ -1,23 +1,23 @@
 package com.naskar.fluentquery;
 
-public interface Predicate<T, R, B> {
+public interface Predicate<T, R, I> {
 
-	B eq(R value);
+	I eq(R value);
 	
-	B ne(R value);
+	I ne(R value);
 
-	B gt(R value);
+	I gt(R value);
 	
-	B ge(R value);
+	I ge(R value);
 
-	B lt(R value);
+	I lt(R value);
 	
-	B le(R value);
+	I le(R value);
 	
-	B like(R value);
+	I like(R value);
 	
-	B isNull();
+	I isNull();
 	
-	B isNotNull();
+	I isNotNull();
 
 }

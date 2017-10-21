@@ -31,13 +31,13 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	private Convention convention;
 	private Boolean usePropertyNameAsAlias;
 	
-	private NativeSQLWhereImpl whereImpl;
+	private NativeSQLWhereImpl nativeWhereImpl;
 	
 	public NativeSQL(Convention convention) {
 		this.convention = convention;
 		this.usePropertyNameAsAlias = false;
-		this.whereImpl = new NativeSQLWhereImpl();
-		this.whereImpl.setConvention(convention);
+		this.nativeWhereImpl = new NativeSQLWhereImpl();
+		this.nativeWhereImpl.setConvention(convention);
 	}
 	
 	public NativeSQL() {
@@ -46,7 +46,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	
 	public NativeSQL setConvention(Convention convention) {
 		this.convention = convention;
-		this.whereImpl.setConvention(convention);
+		this.nativeWhereImpl.setConvention(convention);
 		return this;
 	}
 	
@@ -104,7 +104,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 		
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
 		
-		whereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates(), result);
+		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates(), result);
 		
 		convertGroupBy(parts.getGroupBy(), alias, proxy, queryImpl.getGroups());
 		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());

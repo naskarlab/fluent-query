@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.naskar.fluentquery.impl.PredicateImpl;
 
-public interface PredicateProvider<T, E> {
+public interface PredicateProvider<T, B> {
 	
-	List<PredicateImpl<T, Object, E>> getPredicates();
+	<I> List<PredicateImpl<T, Object, I, B>> getPredicates();
 
 }

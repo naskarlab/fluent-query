@@ -16,12 +16,12 @@ public class NativeSQLWhereImpl {
 		this.convention = convention;
 	}
 	
-	public <T, E> void convertWhere(
+	public <T, I, B> void convertWhere(
 			StringBuilder sb, 
 			String alias,
 			MethodRecordProxy<T> proxy,
 			List<String> parents,
-			List<PredicateImpl<T, Object, E>> predicates,
+			List<PredicateImpl<T, Object, I, B>> predicates,
 			NativeSQLResult result) {
 		
 		List<StringBuilder> conditions = new ArrayList<StringBuilder>();
@@ -34,7 +34,7 @@ public class NativeSQLWhereImpl {
 				StringBuilder sbSpec = new StringBuilder("");
 				
 				@SuppressWarnings("unchecked")
-				PredicateProvider<T, E> q = ((PredicateProvider<T, E>)p.getProperty().apply(null));
+				PredicateProvider<T, B> q = ((PredicateProvider<T, B>)p.getProperty().apply(null));
 				
 				convertWhere(sbSpec, alias, proxy, parents, q.getPredicates(), result);
 				if(sbSpec.length() > 0) {
@@ -54,7 +54,7 @@ public class NativeSQLWhereImpl {
 				
 				p.getActions().forEach(action -> {
 					
-					NativeSQLPredicate<T, Object> predicate = new NativeSQLPredicate<T, Object>(name, result);
+					NativeSQLPredicate<T, Object, I> predicate = new NativeSQLPredicate<T, Object, I>(name, result);
 					predicate.setParents(parents);
 					action.accept(predicate);
 					
