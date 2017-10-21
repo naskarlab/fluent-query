@@ -8,17 +8,17 @@ import java.util.function.Function;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 
-public class PredicateImpl<T, R> implements Predicate<T, R, Query<T>> {
+public class PredicateImpl<T, R, B> implements Predicate<T, R, B> {
 	
 	public enum Type { SPEC_AND, SPEC_OR, AND, OR };
 	
-	private QueryImpl<T> queryImpl;
+	private B impl;
 	private Function<T, R> property;
 	private Type type;
 	private List<Consumer<Predicate<T, R, Query<T>>>> actions;
 	
-	public PredicateImpl(QueryImpl<T> queryImpl, Function<T, R> property, Type type) {
-		this.queryImpl = queryImpl;
+	public PredicateImpl(B impl, Function<T, R> property, Type type) {
+		this.impl = impl;
 		this.property = property;
 		this.type = type;
 		this.actions = new ArrayList<Consumer<Predicate<T, R, Query<T>>>>();
@@ -37,57 +37,57 @@ public class PredicateImpl<T, R> implements Predicate<T, R, Query<T>> {
 	}
 
 	@Override
-	public Query<T> eq(final R value) {
+	public B eq(final R value) {
 		actions.add(i -> i.eq(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> ne(R value) {
+	public B ne(R value) {
 		actions.add(i -> i.ne(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> gt(R value) {
+	public B gt(R value) {
 		actions.add(i -> i.gt(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> ge(R value) {
+	public B ge(R value) {
 		actions.add(i -> i.ge(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> lt(R value) {
+	public B lt(R value) {
 		actions.add(i -> i.lt(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> le(R value) {
+	public B le(R value) {
 		actions.add(i -> i.le(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> like(R value) {
+	public B like(R value) {
 		actions.add(i -> i.like(value));
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> isNull() {
+	public B isNull() {
 		actions.add(i -> i.isNull());
-		return queryImpl;
+		return impl;
 	}
 	
 	@Override
-	public Query<T> isNotNull() {
+	public B isNotNull() {
 		actions.add(i -> i.isNotNull());
-		return queryImpl;
+		return impl;
 	}
 
 }

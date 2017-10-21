@@ -13,22 +13,23 @@ import com.naskar.fluentquery.OrderBy;
 import com.naskar.fluentquery.Predicate;
 import com.naskar.fluentquery.Query;
 import com.naskar.fluentquery.Select;
+import com.naskar.fluentquery.converters.PredicateProvider;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
 
 // TODO: query bind dos parametros
-public class QueryImpl<T> implements Query<T> {
+public class QueryImpl<T> implements Query<T>, PredicateProvider<T, QueryImpl<T>> {
 	
 	private Class<T> clazz;
 	private List<Function<T, ?>> selects;
 	private Map<Function<T, ?>, Consumer<Select>> selectFunctions;
-	private List<PredicateImpl<T, Object>> predicates;
+	private List<PredicateImpl<T, Object, QueryImpl<T>>> predicates;
 	private List<Tuple<QueryImpl<?>, Consumer<T>>> froms;
 	private List<GroupByImpl> groups;
 	private List<OrderByImpl<?>> orders;
 
 	public QueryImpl(Class<T> clazz) {
 		this.clazz = clazz;
-		this.predicates = new ArrayList<PredicateImpl<T, Object>>();
+		this.predicates = new ArrayList<PredicateImpl<T, Object, QueryImpl<T>>>();
 		this.selects = new ArrayList<Function<T, ?>>();
 		this.selectFunctions = new HashMap<Function<T, ?>, Consumer<Select>>();
 		this.groups = new ArrayList<GroupByImpl>();
@@ -60,7 +61,7 @@ public class QueryImpl<T> implements Query<T> {
 		return froms;
 	}
 	
-	public List<PredicateImpl<T, Object>> getPredicates() {
+	public List<PredicateImpl<T, Object, QueryImpl<T>>> getPredicates() {
 		return predicates;
 	}
 	
@@ -103,30 +104,30 @@ public class QueryImpl<T> implements Query<T> {
 	private void addSpec(Consumer<Query<T>> query, Type type) {
 		QueryImpl<T> queryImpl = new QueryImpl<T>(clazz);
 		
-		PredicateImpl<T, Object> p = new PredicateImpl<T, Object>(this, i -> {
+		PredicateImpl<T, Object, QueryImpl<T>> p = new PredicateImpl<T, Object, QueryImpl<T>>(this, i -> {
 			query.accept(queryImpl);
 			return queryImpl;
 		}, type);
 		
-		predicates.add((PredicateImpl<T, Object>) p);
+		predicates.add((PredicateImpl<T, Object, QueryImpl<T>>) p);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <R> Predicate<T, R, Query<T>> and(Function<T, R> property) {
-		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
-		predicates.add((PredicateImpl<T, Object>) p);
-		return p;
+		PredicateImpl<T, R, QueryImpl<T>> p = new PredicateImpl<T, R, QueryImpl<T>>(this, property, Type.AND);
+		predicates.add((PredicateImpl<T, Object, QueryImpl<T>>) p);
+		return (Predicate<T, R, Query<T>>)(Object)p;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <R> Predicate<T, R, Query<T>> andIf(Supplier<Boolean> callIf, Function<T, R> property) {
-		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.AND);
+		PredicateImpl<T, R, QueryImpl<T>> p = new PredicateImpl<T, R, QueryImpl<T>>(this, property, Type.AND);
 		if(callIf.get()) {
-			predicates.add((PredicateImpl<T, Object>) p);
+			predicates.add((PredicateImpl<T, Object, QueryImpl<T>>)p);
 		}
-		return p;
+		return (Predicate<T, R, Query<T>>)(Object)p;
 	}
 	
 	@Override
@@ -138,9 +139,9 @@ public class QueryImpl<T> implements Query<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <R> Predicate<T, R, Query<T>> or(Function<T, R> property) {
-		PredicateImpl<T, R> p = new PredicateImpl<T, R>(this, property, Type.OR);
-		predicates.add((PredicateImpl<T, Object>) p);
-		return p;
+		PredicateImpl<T, R, QueryImpl<T>> p = new PredicateImpl<T, R, QueryImpl<T>>(this, property, Type.OR);
+		predicates.add((PredicateImpl<T, Object, QueryImpl<T>>) p);
+		return (Predicate<T, R, Query<T>>)(Object)p;
 	}
 	
 	@Override
