@@ -154,7 +154,7 @@ public void testDelete() {
 	 
 ```
 
-## Usage Maven
+## Usage with Maven
 
 ```
 <repositories>
@@ -175,8 +175,8 @@ public void testDelete() {
 
 ## Releases
 
-### 0.0.1 
-	- Simple Queries
-
 ### 0.1.0 
 	- Insert, Update and Delete included.
+
+### 0.0.1 
+	- Simple Queries
