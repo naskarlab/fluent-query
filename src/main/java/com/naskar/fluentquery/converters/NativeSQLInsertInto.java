@@ -57,18 +57,10 @@ public class NativeSQLInsertInto implements IntoConverter<NativeSQLResult> {
 	}
 	
 	private <T> void convert(IntoImpl<T> intoImpl, InsertParts parts, NativeSQLResult result) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(createInstance(intoImpl.getClazz()));
+		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(intoImpl.getClazz());
 		convertInto(parts.getInto(), intoImpl.getClazz());
 		convertColumns(parts.getColumns(), proxy, intoImpl.getValues());
 		convertValues(parts.getValues(), proxy, intoImpl.getValues(), result);		
-	}
-	
-	private <T> T createInstance(Class<T> clazz) {
-		try {
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 	
 	private <T> void convertInto(StringBuilder sb, Class<T> clazz) {

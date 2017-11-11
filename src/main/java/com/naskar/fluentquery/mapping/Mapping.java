@@ -21,15 +21,8 @@ public class Mapping<T> {
 	public Mapping<T> to(Class<T> clazz, String tableName) {
 		this.clazz = clazz;
 		this.tableName = tableName;
-		
-		try {
-			this.proxy = new MethodRecordProxy<T>(clazz.newInstance());
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-		
+		this.proxy = new MethodRecordProxy<T>(clazz);
 		this.columns = new HashMap<List<Method>, String>();
-		
 		return this;
 	}
 	

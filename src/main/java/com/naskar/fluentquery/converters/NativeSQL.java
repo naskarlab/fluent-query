@@ -95,8 +95,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	}
 	
 	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(
-				createInstance(queryImpl.getClazz()));
+		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(queryImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		
@@ -145,14 +144,6 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 		});
 	}
 	
-	private <T> T createInstance(Class<T> clazz) {
-		try {
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private <T> void convertSelect(
 		StringBuilder sb, String alias,
 		MethodRecordProxy<T> proxy, 

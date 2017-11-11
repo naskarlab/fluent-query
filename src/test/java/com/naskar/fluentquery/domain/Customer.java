@@ -1,11 +1,14 @@
 package com.naskar.fluentquery.domain;
 
+import java.util.Date;
+
 public class Customer {
 	
 	private Long id;
 	private String name;
 	private Long regionCode;
 	private Double minBalance;
+	private Date created;
 	private Address mainAddress;
 	private Address secondaryAddress;
 	private Customer holder;
@@ -44,6 +47,14 @@ public class Customer {
 
 	public Address getMainAddress() {
 		return mainAddress;
+	}
+	
+	public Date getCreated() {
+		return created;
+	}
+	
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	public void setMainAddress(Address mainAddress) {

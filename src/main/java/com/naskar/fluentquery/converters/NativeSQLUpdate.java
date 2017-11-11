@@ -67,7 +67,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	
 	private <T> void convert(UpdateImpl<T> updateImpl, UpdateParts parts, 
 			final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(createInstance(updateImpl.getClazz()));
+		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(updateImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		
@@ -75,14 +75,6 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 		convertSet(parts.getSet(), alias, proxy, updateImpl.getValues(), result);
 		
 		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, updateImpl.getPredicates(), result);		
-	}
-	
-	private <T> T createInstance(Class<T> clazz) {
-		try {
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 	
 	private <T> void convertTable(StringBuilder sb, String alias, Class<T> clazz) {

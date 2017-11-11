@@ -58,7 +58,7 @@ public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 	
 	private <T> void convert(DeleteImpl<T> deleteImpl, DeleteParts parts, 
 			final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(createInstance(deleteImpl.getClazz()));
+		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(deleteImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		
@@ -66,15 +66,7 @@ public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 		
 		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, deleteImpl.getPredicates(), result);		
 	}
-	
-	private <T> T createInstance(Class<T> clazz) {
-		try {
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
+		
 	private <T> void convertTable(StringBuilder sb, String alias, Class<T> clazz) {
 		sb.append(convention.getNameFromClass(clazz) + " " + 
 			alias.substring(0, alias.length()-1));

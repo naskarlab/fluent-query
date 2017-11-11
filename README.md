@@ -9,6 +9,7 @@ Create Queries, Inserts, Updates e Deletes using only POJO classes.
 * Glue code: it’s only a small and simple classes set;
 * Fluent Builder: code complete is your friend!
 * Check compiler: Refactory ? No problem. Do the compiler to work to you.
+* Performance-based: if you are paranoid by performance, use binder parameters to create Queries, Insert, Update and Deletes. 
 
 ## Examples
 
@@ -98,6 +99,12 @@ public void testTwoEntities() {
 	Assert.assertEquals(result.params().get("p1"), 0.0);
 }
 
+```
+
+
+### Insert, Update and Delete
+
+```
 @Test
 public void testInsert() {
 	String expected = "insert into Customer (id, name, minBalance) values (:p0, :p1, :p2)";
@@ -151,6 +158,44 @@ public void testDelete() {
 	Assert.assertEquals(expected, actual);	
 	Assert.assertEquals(result.params().get("p0"), 1L);
 }
+
+```
+
+
+### Binder Parameters
+
+```
+
+@Test
+public void testMultipleInsert() {
+	String expected = "insert into Customer (name) values (:p0)";
+	
+	BinderSQL<Customer> binder = binderBuilder
+			.from(Customer.class);
+	
+	binder.configure(new InsertBuilder()
+		.into(Customer.class)
+			.value(i -> i.getName()).set(binder.get(i -> i.getName()))
+		.to(new NativeSQLInsertInto())
+	);
+	
+	Customer customer1 = new Customer();
+	customer1.setName("teste");
+	
+	Customer customer2 = new Customer();
+	customer2.setName("rafael");
+	
+	NativeSQLResult result1 = binder.bind(customer1);
+	NativeSQLResult result2 = binder.bind(customer2);
+	
+	String actual1 = result1.sql();
+	String actual2 = result2.sql();
+	
+	Assert.assertEquals(expected, actual1);
+	Assert.assertEquals(expected, actual2);
+	Assert.assertEquals(result1.params().get("p0"), customer1.getName());
+	Assert.assertEquals(result2.params().get("p0"), customer2.getName());
+}
 	 
 ```
 
@@ -174,6 +219,9 @@ public void testDelete() {
 
 
 ## Releases
+
+### 0.2.0 
+	- Use Binder parameters to create caches for queries, inserts, updates and delete sqls.
 
 ### 0.1.0 
 	- Insert, Update and Delete included.

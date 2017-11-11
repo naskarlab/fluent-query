@@ -14,17 +14,35 @@ public class MethodRecordProxy<T> implements MethodInterceptor {
 	private T target;
 	private List<Method> methods;
 	private MethodRecordProxy<?> parent;
+	private boolean execute;
 	
 	@SuppressWarnings("unchecked")
 	public MethodRecordProxy(T target) {
 		this.target = target;
 		this.methods = new ArrayList<Method>();
+		this.execute = true;
 		
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(target.getClass());
 		enhancer.setCallback(this);
 		
 		this.proxy = (T) enhancer.create();
+	}
+	
+	public void setExecute(boolean execute) {
+		this.execute = execute;
+	}
+	
+	public MethodRecordProxy(Class<T> clazz) {
+		this(createInstance(clazz));
+	}
+	
+	public static <E> E createInstance(Class<E> clazz) {
+		try {
+			return clazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private <E> MethodRecordProxy(T target, MethodRecordProxy<E> parent) {
@@ -42,20 +60,24 @@ public class MethodRecordProxy<T> implements MethodInterceptor {
 			this.methods.add(method);
 		}
 		
-		Object result = methodProxy.invoke(target, args);
-		
-		if(result == null && !TypeUtils.isValueType(method.getReturnType())) {
-			try {
-				Object o = method.getReturnType().newInstance();
-				MethodRecordProxy proxyTmp = 
-					new MethodRecordProxy(o, parent != null ? parent : this);
-				result = proxyTmp.getProxy();
-			} catch(Exception e) {
-				result = null;
+		if(execute) {
+			Object result = methodProxy.invoke(target, args);
+			
+			if(result == null && !TypeUtils.isValueType(method.getReturnType())) {
+				try {
+					Object o = method.getReturnType().newInstance();
+					MethodRecordProxy proxyTmp = 
+						new MethodRecordProxy(o, parent != null ? parent : this);
+					result = proxyTmp.getProxy();
+				} catch(Exception e) {
+					result = null;
+				}
 			}
+			
+			return result;
+		} else {
+			return null;
 		}
-		
-		return result;
 	}
 	
 	public Method getCalledMethod() {
