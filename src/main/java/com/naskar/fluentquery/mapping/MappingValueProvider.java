@@ -23,7 +23,7 @@ public class MappingValueProvider<T> extends Mapping<T> {
 	}
 	
 	public MappingValueProvider<T> to(Class<T> clazz, String tableName) {
-		to(clazz, tableName);
+		super.to(clazz, tableName);
 		return this;
 	}
 	

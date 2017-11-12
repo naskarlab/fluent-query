@@ -17,6 +17,7 @@ public class MappingFactory {
 					.map(i -> i.getName(), "DS_NAME", (i, v) -> i.setName(v))
 					.map(i -> i.getMinBalance(), "VL_MIN_BALANCE", (i, v) -> i.setMinBalance(v))
 					.map(i -> i.getRegionCode(), "NU_REGION_CODE", (i, v) -> i.setRegionCode(v))
+					.map(i -> i.getCreated(), "DT_CREATED", (i, v) -> i.setCreated(v))
 					.map(i -> i.getMainAddress().getId(), "CD_ADDRESS_MAIN", (i, v) -> {
 						i.setMainAddress(new Address());
 						i.getMainAddress().setId(v);
