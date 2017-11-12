@@ -44,5 +44,13 @@ public class Mapping<T> {
 	public String getColumnName(List<Method> key) {
 		return this.columns.get(key);
 	}
+	
+	protected MethodRecordProxy<T> getProxy() {
+		return proxy;
+	}
+	
+	protected Map<List<Method>, String> getColumns() {
+		return columns;
+	}
 
 }

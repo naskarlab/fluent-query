@@ -21,6 +21,11 @@ public class MappingConvention implements Convention {
 		maps.put(map.getClazz(), map);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T> Mapping<T> get(Class<T> clazz) {
+		return (Mapping<T>) this.maps.get(clazz);
+	}
+	
 	@Override
 	public String getNameFromMethod(Method m) {
 		return getNameFromMethod(Arrays.asList(m));
