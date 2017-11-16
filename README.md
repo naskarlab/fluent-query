@@ -216,13 +216,16 @@ public void testMultipleInsert() {
 <dependency>
     <groupId>com.github.naskarlab</groupId>
     <artifactId>fluent-query</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 
 ```
 
 
 ## Releases
+
+### 0.3.0 
+	- MappingValueProvider included for fill entities using unstructured datas.
 
 ### 0.2.0 
 	- Use Binder parameters to create caches for queries, inserts, updates and delete sqls.

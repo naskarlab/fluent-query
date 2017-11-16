@@ -4,7 +4,7 @@
 	<groupId>com.naskar</groupId>
 	<artifactId>fluent-query</artifactId>
 	<packaging>jar</packaging>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<name>fluent-query</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
