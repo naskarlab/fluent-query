@@ -9,7 +9,11 @@ Create Queries, Inserts, Updates e Deletes using only POJO classes.
 * Glue code: it’s only a small and simple classes set;
 * Fluent Builder: code complete is your friend!
 * Check compiler: Refactory ? No problem. Do the compiler to work to you.
-* Performance-based: if you are paranoid by performance, use binder parameters to create Queries, Insert, Update and Deletes. 
+* Performance-based: if you are paranoid by performance, use binder parameters to create Queries, Insert, Update and Deletes.
+
+## Mapping
+
+Mapping with JPA EclipseLink: [Fluent Query EclipseLink](https://github.com/naskarlab/fluent-query-eclipselink)   
 
 ## Examples
 
