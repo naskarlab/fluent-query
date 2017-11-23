@@ -33,6 +33,11 @@ public class SelectImpl<T> implements Select {
 		return this;
 	}
 	
+	public Select func(Function<String, String> action) {
+		this.action = action;
+		return this;
+	}
+	
 	@Override
 	public Select groupBy() {
 		if(this.alias != null) {

@@ -13,7 +13,6 @@ import com.naskar.fluentquery.Query;
 import com.naskar.fluentquery.Select;
 import com.naskar.fluentquery.converters.PredicateProvider;
 
-// TODO: query bind dos parametros
 public class QueryImpl<T> 
 		extends WhereImpl<T, Query<T>, QueryImpl<T>> 
 		implements Query<T>, PredicateProvider<T, QueryImpl<T>> {
@@ -21,6 +20,7 @@ public class QueryImpl<T>
 	private Class<T> clazz;
 	private List<Function<T, ?>> selects;
 	private Map<Function<T, ?>, Consumer<Select>> selectFunctions;
+	private Boolean withoutSelect;
 	private List<Tuple<QueryImpl<?>, Consumer<T>>> froms;
 	private List<GroupByImpl> groups;
 	private List<OrderByImpl<?>> orders;
@@ -30,6 +30,7 @@ public class QueryImpl<T>
 		this.clazz = clazz;
 		this.selects = new ArrayList<Function<T, ?>>();
 		this.selectFunctions = new HashMap<Function<T, ?>, Consumer<Select>>();
+		this.withoutSelect = false;
 		this.groups = new ArrayList<GroupByImpl>();
 		this.orders = new ArrayList<OrderByImpl<?>>();
 		this.froms = new ArrayList<Tuple<QueryImpl<?>, Consumer<T>>>();
@@ -45,6 +46,10 @@ public class QueryImpl<T>
 	
 	public Map<Function<T, ?>, Consumer<Select>> getSelectFunctions() {
 		return selectFunctions;
+	}
+	
+	public Boolean getWithoutSelect() {
+		return withoutSelect;
 	}
 	
 	public List<GroupByImpl> getGroups() {
@@ -74,6 +79,12 @@ public class QueryImpl<T>
 	public <R> Query<T> select(Function<T, R> property, Consumer<Select> action) {
 		this.selects.add(property);
 		this.selectFunctions.put(property, action);
+		return this;
+	}
+	
+	@Override
+	public <R> Query<T> withoutSelect() {
+		withoutSelect = true;
 		return this;
 	}
 	

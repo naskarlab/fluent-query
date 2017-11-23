@@ -114,6 +114,41 @@ public class NativeMappingQueryTest {
 	}
 	
 	@Test
+	public void testTwoEntitiesWithAttributesOnlyOneEntity() {
+		String expected = 
+			"select e0.DS_NAME from TB_CUSTOMER e0, TB_ACCOUNT e1" +
+			" where e0.DS_NAME like :p0" +
+			" and e1.VL_BALANCE > :p1" +
+			" and e1.CD_CUSTOMER = e0.CD_CUSTOMER" +
+			" and e1.NU_REGION_CODE = e0.NU_REGION_CODE" +
+			" and e1.VL_BALANCE < e0.VL_MIN_BALANCE"
+			;
+		
+		NativeSQLResult result = new QueryBuilder()
+			.from(Customer.class)
+				.where(i -> i.getName()).like("r%")
+				.select(i -> i.getName())
+			.from(Account.class, (query, parent) -> {
+				
+				query
+					.withoutSelect()
+					.where(i -> i.getBalance()).gt(0.0)
+						.and(i -> i.getCustomer().getId()).eq(parent.getId())
+						.and(i -> i.getCustomer().getRegionCode()).eq(parent.getRegionCode())
+						.and(i -> i.getBalance()).lt(parent.getMinBalance());
+				
+			})
+			.to(new NativeSQL(mc))
+			;
+		
+		String actual = result.sql();
+		
+		Assert.assertEquals(expected, actual);
+		Assert.assertEquals(result.params().get("p0"), "r%");
+		Assert.assertEquals(result.params().get("p1"), 0.0);
+	}
+	
+	@Test
 	public void testTwoAttributesSameEntity() {
 		String expected = 
 			"select e0.DS_NAME, e1.DS_DESCRIPTION, e2.DS_DESCRIPTION" +

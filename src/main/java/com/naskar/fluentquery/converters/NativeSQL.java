@@ -99,8 +99,10 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 		
 		String alias = "e" + level + ".";
 		
-		convertSelect(parts.getSelect(), alias, proxy, queryImpl, 
-			queryImpl.getSelects(), queryImpl.getSelectFunctions());
+		if(!queryImpl.getWithoutSelect()) {
+			convertSelect(parts.getSelect(), alias, proxy, queryImpl, 
+				queryImpl.getSelects(), queryImpl.getSelectFunctions());
+		}
 		
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
 		
@@ -158,9 +160,10 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 			
 			Method m = proxy.getCalledMethod();
 			
-			String result = alias + convention.getNameFromMethod(m);
+			String name = convention.getNameFromMethod(m);
+			String result = alias + name;
 			
-			result = executeSelectFunctions(result, selectFunctions, i, queryImpl);
+			result = executeSelectFunctions(result, name, selectFunctions, i, queryImpl);
 			
 			if(!(convention instanceof SimpleConvention) && usePropertyNameAsAlias != null && usePropertyNameAsAlias) {
 				result = result + " as " + SimpleConvention.getPropertyNameFromMethod(m); 
@@ -179,6 +182,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 
 	private <T> String executeSelectFunctions(
 			String column, 
+			String name,
 			Map<Function<T, ?>, Consumer<Select>> selectFunctions, 
 			Function<T, ?> i,
 			QueryImpl<T> queryImpl) {
@@ -193,7 +197,11 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 			
 			Function<String, String> action = selectImpl.getAction();
 			if(action != null) {
-				result = action.apply(result) + " as " + selectImpl.getAlias();
+				String actionAlias =  selectImpl.getAlias();
+				if(actionAlias == null) {
+					actionAlias = name;
+				}
+				result = action.apply(result) + " as " + actionAlias;
 			}
 		}
 		

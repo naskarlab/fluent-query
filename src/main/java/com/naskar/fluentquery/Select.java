@@ -4,6 +4,8 @@ import java.util.function.Function;
 
 public interface Select {
 	
+	Select func(Function<String, String> action);
+	
 	Select func(Function<String, String> action, String alias);
 
 	Select groupBy();

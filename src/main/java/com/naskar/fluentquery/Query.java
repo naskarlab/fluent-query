@@ -16,6 +16,8 @@ public interface Query<T> extends Whereable<T, Query<T>> {
 	
 	<R> Query<T> select(Function<T, R> property, Consumer<Select> action);
 	
+	<R> Query<T> withoutSelect();
+	
 	<J> Query<T> from(Class<J> clazz, BiConsumer<Query<J>, T> action);
 	
 	<R> Query<T> groupBy(Function<T, R> property);
