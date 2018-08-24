@@ -95,7 +95,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	}
 	
 	private <T> void convert(QueryImpl<T> queryImpl, QueryParts parts, final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(queryImpl.getClazz());
+		MethodRecordProxy<T> proxy = TypeUtils.createProxy(queryImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		

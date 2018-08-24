@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import com.naskar.fluentquery.converters.NativeSQLResult;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
+import com.naskar.fluentquery.impl.TypeUtils;
 
 public class BinderSQLImpl<T> implements BinderSQL<T> {
 	
@@ -18,7 +19,7 @@ public class BinderSQLImpl<T> implements BinderSQL<T> {
 
 	public BinderSQLImpl(Class<T> clazz) {
 		this.maps = new IdentityHashMap<Object, Function<T, ?>>();
-		this.proxy = new MethodRecordProxy<T>(clazz);
+		this.proxy = TypeUtils.createProxy(clazz);
 		this.proxy.setExecute(false);
 	}
 
@@ -48,7 +49,7 @@ public class BinderSQLImpl<T> implements BinderSQL<T> {
 				return (R) new Double(0L);
 				
 		} else {
-			return (R)MethodRecordProxy.createInstance(returnType);
+			return (R)TypeUtils.createInstance(returnType);
 		}
 	}
 

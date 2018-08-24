@@ -9,6 +9,7 @@ import com.naskar.fluentquery.impl.DeleteImpl;
 import com.naskar.fluentquery.impl.DeleteParts;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
+import com.naskar.fluentquery.impl.TypeUtils;
 
 public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 	
@@ -58,7 +59,7 @@ public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 	
 	private <T> void convert(DeleteImpl<T> deleteImpl, DeleteParts parts, 
 			final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(deleteImpl.getClazz());
+		MethodRecordProxy<T> proxy = TypeUtils.createProxy(deleteImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		

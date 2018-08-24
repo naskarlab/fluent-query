@@ -5,6 +5,32 @@ import java.util.Set;
 
 public class TypeUtils {
 	
+	private static MethodRecordProxyFactory recordFactory;
+	
+	static {
+		recordFactory = new MethodRecordProxyFactory() {
+			public <T> MethodRecordProxy<T> create(Class<T> clazz) {
+				return new MethodRecordProxyCGLib<T>(clazz);
+			}
+		};
+	}
+	
+	public static void setMethodRecordProxyFactory(MethodRecordProxyFactory f) {
+		recordFactory = f;
+	}
+	
+	public static <E> E createInstance(Class<E> clazz) {
+		try {
+			return clazz.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public static <T> MethodRecordProxy<T> createProxy(Class<T> clazz) {
+		return recordFactory.create(clazz);
+	}
+	
 	private TypeUtils () {
 	}
 

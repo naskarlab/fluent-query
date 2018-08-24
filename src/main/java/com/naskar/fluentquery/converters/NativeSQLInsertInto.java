@@ -14,6 +14,7 @@ import com.naskar.fluentquery.impl.IntoConverter;
 import com.naskar.fluentquery.impl.IntoImpl;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.Tuple;
+import com.naskar.fluentquery.impl.TypeUtils;
 import com.naskar.fluentquery.impl.ValueImpl;
 
 public class NativeSQLInsertInto implements IntoConverter<NativeSQLResult> {
@@ -57,7 +58,7 @@ public class NativeSQLInsertInto implements IntoConverter<NativeSQLResult> {
 	}
 	
 	private <T> void convert(IntoImpl<T> intoImpl, InsertParts parts, NativeSQLResult result) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(intoImpl.getClazz());
+		MethodRecordProxy<T> proxy = TypeUtils.createProxy(intoImpl.getClazz());
 		convertInto(parts.getInto(), intoImpl.getClazz());
 		convertColumns(parts.getColumns(), proxy, intoImpl.getValues());
 		convertValues(parts.getValues(), proxy, intoImpl.getValues(), result);		

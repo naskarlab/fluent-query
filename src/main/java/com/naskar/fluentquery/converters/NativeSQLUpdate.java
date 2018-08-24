@@ -11,6 +11,7 @@ import com.naskar.fluentquery.impl.Convention;
 import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.Tuple;
+import com.naskar.fluentquery.impl.TypeUtils;
 import com.naskar.fluentquery.impl.UpdateConverter;
 import com.naskar.fluentquery.impl.UpdateImpl;
 import com.naskar.fluentquery.impl.UpdateParts;
@@ -67,7 +68,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	
 	private <T> void convert(UpdateImpl<T> updateImpl, UpdateParts parts, 
 			final HolderInt level, NativeSQLResult result, List<String> parents) {
-		MethodRecordProxy<T> proxy = new MethodRecordProxy<T>(updateImpl.getClazz());
+		MethodRecordProxy<T> proxy = TypeUtils.createProxy(updateImpl.getClazz());
 		
 		String alias = "e" + level + ".";
 		

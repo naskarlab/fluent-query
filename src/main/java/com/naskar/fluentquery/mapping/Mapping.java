@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.naskar.fluentquery.impl.MethodRecordProxy;
+import com.naskar.fluentquery.impl.TypeUtils;
 
 public class Mapping<T> {
 	
@@ -21,7 +22,7 @@ public class Mapping<T> {
 	public Mapping<T> to(Class<T> clazz, String tableName) {
 		this.clazz = clazz;
 		this.tableName = tableName;
-		this.proxy = new MethodRecordProxy<T>(clazz);
+		this.proxy = TypeUtils.createProxy(clazz);
 		this.columns = new HashMap<List<Method>, String>();
 		return this;
 	}
