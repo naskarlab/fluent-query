@@ -90,13 +90,13 @@ class NativeSQLPredicate<T, R, I> implements Predicate<T, R, I> {
 	
 	@Override
 	public I isNull() {
-		conditions.add(new StringBuilder(" is null "));
+		conditions.add(new StringBuilder(name).append(" is null "));
 		return null;
 	}
 	
 	@Override
 	public I isNotNull() {
-		conditions.add(new StringBuilder(" is not null "));
+		conditions.add(new StringBuilder(name).append(" is not null "));
 		return null;
 	}
 

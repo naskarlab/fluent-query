@@ -9,12 +9,14 @@ public class NativeSQLResult {
 	
 	private String sql;
 	private Map<String, Object> params;
+	private List<String> names;
 	private List<Object> values;
 	private int i;
 	
 	public NativeSQLResult() {
 		this.i = -1;
 		this.params = new HashMap<String, Object>();
+		this.names = new ArrayList<String>();
 		this.values = new ArrayList<Object>();
 	}
 	
@@ -29,7 +31,8 @@ public class NativeSQLResult {
 	
 	public String sqlValues() {
 		String temp = sql;
-		for(String k : params.keySet()) {
+		for(int i = names.size()-1; i > -1; i--) {
+			String k = names.get(i);
 			temp = temp.replaceAll(":" + k, "?");
 		}
 		return temp;
@@ -47,6 +50,7 @@ public class NativeSQLResult {
 	String add(Object value) {
 		String k = "p" + (++i);
 		params.put(k, value);
+		names.add(k);
 		values.add(value);
 		return k;
 	}
