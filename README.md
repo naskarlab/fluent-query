@@ -15,6 +15,8 @@ Create Queries, Inserts, Updates e Deletes using only POJO classes.
 
 * JPA EclipseLink: [Fluent Query EclipseLink](https://github.com/naskarlab/fluent-query-eclipselink)
 * JDBC Drivers:    [Fluent Query JDBC](https://github.com/naskarlab/fluent-query-jdbc)
+* MongoDB:         [Fluent Query MongoDB](https://github.com/naskarlab/fluent-query-mongodb)
+
 
 ## Examples
 

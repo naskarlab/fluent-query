@@ -22,10 +22,17 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	private Convention convention;
 	private NativeSQLWhereImpl nativeWhereImpl;
 	
+	private boolean withoutAlias;
+	
 	public NativeSQLUpdate(Convention convention) {
 		this.convention = convention;
 		this.nativeWhereImpl = new NativeSQLWhereImpl();
 		this.nativeWhereImpl.setConvention(convention);
+		this.withoutAlias = false;
+	}
+	
+	public void setWithoutAlias(boolean withoutAlias) {
+		this.withoutAlias = withoutAlias;
 	}
 	
 	public NativeSQLUpdate() {
@@ -70,7 +77,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 			final HolderInt level, NativeSQLResult result, List<String> parents) {
 		MethodRecordProxy<T> proxy = TypeUtils.createProxy(updateImpl.getClazz());
 		
-		String alias = "e" + level + ".";
+		String alias = withoutAlias ? "" : "e" + level + ".";
 		
 		convertTable(parts.getTable(), alias, updateImpl.getClazz());
 		convertSet(parts.getSet(), alias, proxy, updateImpl.getValues(), result);
@@ -79,8 +86,8 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	}
 	
 	private <T> void convertTable(StringBuilder sb, String alias, Class<T> clazz) {
-		sb.append(convention.getNameFromClass(clazz) + " " + 
-			alias.substring(0, alias.length()-1));
+		String sufix = withoutAlias ? "" : " " + alias.substring(0, alias.length()-1);
+		sb.append(convention.getNameFromClass(clazz) + sufix);
 	}
 	
 	private <T> void convertSet(
