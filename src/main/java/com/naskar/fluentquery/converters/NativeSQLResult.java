@@ -38,6 +38,10 @@ public class NativeSQLResult {
 		return temp;
 	}
 	
+	public List<String> names() {
+		return names;
+	}
+	
 	public Map<String, Object> params() {
 		return params;
 	}

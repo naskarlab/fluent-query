@@ -58,6 +58,7 @@ public class BinderSQLImpl<T> implements BinderSQL<T> {
 		
 		NativeSQLResult newResult = new NativeSQLResult();
 		newResult.sql(result.sql());
+		newResult.names().addAll(result.names());
 		
 		Map<String, Object> params = newResult.params();
 		List<Object> values = newResult.values();
