@@ -28,7 +28,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 		this.convention = convention;
 		this.nativeWhereImpl = new NativeSQLWhereImpl();
 		this.nativeWhereImpl.setConvention(convention);
-		this.withoutAlias = false;
+		this.withoutAlias = true;
 	}
 	
 	public void setWithoutAlias(boolean withoutAlias) {
