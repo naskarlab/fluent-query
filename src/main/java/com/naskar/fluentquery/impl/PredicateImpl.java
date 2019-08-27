@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.naskar.fluentquery.Join;
 import com.naskar.fluentquery.Predicate;
 
 public class PredicateImpl<T, R, I, B> implements Predicate<T, R, B> {
@@ -86,6 +87,18 @@ public class PredicateImpl<T, R, I, B> implements Predicate<T, R, B> {
 	@Override
 	public B isNotNull() {
 		actions.add(i -> i.isNotNull());
+		return impl;
+	}
+	
+	@Override
+	public <J> B in(Class<J> clazz, Join<J, T> action) {
+		actions.add(i -> i.in(clazz, action));
+		return impl;
+	}
+	
+	@Override
+	public <J> B notIn(Class<J> clazz, Join<J, T> action) {
+		actions.add(i -> i.notIn(clazz, action));
 		return impl;
 	}
 

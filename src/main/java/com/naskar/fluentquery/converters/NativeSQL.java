@@ -37,7 +37,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	public NativeSQL(Convention convention) {
 		this.convention = convention;
 		this.usePropertyNameAsAlias = false;
-		this.nativeWhereImpl = new NativeSQLWhereImpl();
+		this.nativeWhereImpl = new NativeSQLWhereImpl(this);
 		this.nativeWhereImpl.setConvention(convention);
 	}
 	
@@ -58,15 +58,19 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 	
 	@Override
 	public <T> NativeSQLResult convert(QueryImpl<T> queryImpl) {
-		
-		NativeSQLResult result = new NativeSQLResult();
-		
-		QueryParts parts = new QueryParts();
-		
 		HolderInt level = new HolderInt();
 		level.value = 0;
 		
-		convert(queryImpl, parts, level, result, null);
+		return convert(queryImpl, null, level);
+	}
+	
+	public <T> NativeSQLResult convert(QueryImpl<T> queryImpl, List<String> parentsTemp, HolderInt level) {
+		
+		NativeSQLResult result = new NativeSQLResult(level.value-1);
+		
+		QueryParts parts = new QueryParts();
+		
+		convert(queryImpl, parts, level, result, parentsTemp);
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -106,7 +110,7 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 		
 		convertFrom(parts.getFrom(), alias, queryImpl.getClazz());
 		
-		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, queryImpl.getPredicates(), result);
+		nativeWhereImpl.convertWhere(parts.getWhere(), level, alias, proxy, parents, queryImpl.getPredicates(), result);
 		
 		convertGroupBy(parts.getGroupBy(), alias, proxy, queryImpl.getGroups());
 		convertOrderBy(parts.getOrderBy(), alias, proxy, queryImpl.getOrders());
@@ -126,24 +130,30 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 			proxy.clear();
 			i.getT2().accept(proxy.getProxy());
 			
-			List<String> parentsTmp = new ArrayList<String>();
-			Iterator<Method> it = proxy.getMethods().iterator(); 
-			while(it.hasNext()) {
-				
-				Method m = null;
-				List<Method> path = new ArrayList<Method>();
-				do {
-					m = it.next();
-					path.add(m);
-				} while(!TypeUtils.isValueType(m.getReturnType()) && it.hasNext());
-				
-				parentsTmp.add(alias + convention.getNameFromMethod(path));
-			}
+			List<String> parentsTmp = createParents(alias, proxy);
 			
 			level.value++;
 			convert(i.getT1(), parts, level, result, parentsTmp);
 			
 		});
+	}
+
+	public <T> List<String> createParents(String alias, MethodRecordProxy<T> proxy) {
+		List<String> parentsTmp = new ArrayList<String>();
+		Iterator<Method> it = proxy.getMethods().iterator(); 
+		while(it.hasNext()) {
+			
+			Method m = null;
+			List<Method> path = new ArrayList<Method>();
+			do {
+				m = it.next();
+				path.add(m);
+			} while(!TypeUtils.isValueType(m.getReturnType()) && it.hasNext());
+			
+			parentsTmp.add(alias + convention.getNameFromMethod(path));
+		}
+		
+		return parentsTmp;
 	}
 	
 	private <T> void convertSelect(

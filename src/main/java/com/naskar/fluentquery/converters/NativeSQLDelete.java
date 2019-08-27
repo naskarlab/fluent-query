@@ -14,11 +14,14 @@ import com.naskar.fluentquery.impl.TypeUtils;
 public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 	
 	private Convention convention;
+	private NativeSQL nativeSQL;
 	private NativeSQLWhereImpl nativeWhereImpl;
 	
 	public NativeSQLDelete(Convention convention) {
 		this.convention = convention;
-		this.nativeWhereImpl = new NativeSQLWhereImpl();
+		this.nativeSQL = new NativeSQL();
+		this.nativeSQL.setConvention(convention);
+		this.nativeWhereImpl = new NativeSQLWhereImpl(this.nativeSQL);
 		this.nativeWhereImpl.setConvention(convention);
 	}
 	
@@ -28,6 +31,7 @@ public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 	
 	public NativeSQLDelete setConvention(Convention convention) {
 		this.convention = convention;
+		this.nativeSQL.setConvention(convention);
 		this.nativeWhereImpl.setConvention(convention);
 		return this;
 	}
@@ -65,7 +69,7 @@ public class NativeSQLDelete implements DeleteConverter<NativeSQLResult> {
 		
 		convertTable(parts.getTable(), alias, deleteImpl.getClazz());
 		
-		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, deleteImpl.getPredicates(), result);		
+		nativeWhereImpl.convertWhere(parts.getWhere(), level, alias, proxy, parents, deleteImpl.getPredicates(), result);		
 	}
 		
 	private <T> void convertTable(StringBuilder sb, String alias, Class<T> clazz) {

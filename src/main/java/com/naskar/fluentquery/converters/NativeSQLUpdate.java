@@ -20,19 +20,23 @@ import com.naskar.fluentquery.impl.ValueImpl;
 public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	
 	private Convention convention;
+	private NativeSQL nativeSQL;
 	private NativeSQLWhereImpl nativeWhereImpl;
 	
 	private boolean withoutAlias;
 	
 	public NativeSQLUpdate(Convention convention) {
 		this.convention = convention;
-		this.nativeWhereImpl = new NativeSQLWhereImpl();
+		this.nativeSQL = new NativeSQL();
+		this.nativeSQL.setConvention(convention);
+		this.nativeWhereImpl = new NativeSQLWhereImpl(this.nativeSQL);
 		this.nativeWhereImpl.setConvention(convention);
 		this.withoutAlias = true;
 	}
 	
-	public void setWithoutAlias(boolean withoutAlias) {
+	public NativeSQLUpdate setWithoutAlias(boolean withoutAlias) {
 		this.withoutAlias = withoutAlias;
+		return this;
 	}
 	
 	public NativeSQLUpdate() {
@@ -41,6 +45,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	
 	public NativeSQLUpdate setConvention(Convention convention) {
 		this.convention = convention;
+		this.nativeSQL.setConvention(convention);
 		this.nativeWhereImpl.setConvention(convention);
 		return this;
 	}
@@ -82,7 +87,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 		convertTable(parts.getTable(), alias, updateImpl.getClazz());
 		convertSet(parts.getSet(), alias, proxy, updateImpl.getValues(), result);
 		
-		nativeWhereImpl.convertWhere(parts.getWhere(), alias, proxy, parents, updateImpl.getPredicates(), result);		
+		nativeWhereImpl.convertWhere(parts.getWhere(), level, alias, proxy, parents, updateImpl.getPredicates(), result);		
 	}
 	
 	private <T> void convertTable(StringBuilder sb, String alias, Class<T> clazz) {

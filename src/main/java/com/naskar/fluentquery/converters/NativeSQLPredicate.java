@@ -3,19 +3,43 @@ package com.naskar.fluentquery.converters;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.naskar.fluentquery.Join;
 import com.naskar.fluentquery.Predicate;
+import com.naskar.fluentquery.Query;
+import com.naskar.fluentquery.QueryBuilder;
+import com.naskar.fluentquery.impl.HolderInt;
+import com.naskar.fluentquery.impl.MethodRecordProxy;
+import com.naskar.fluentquery.impl.QueryImpl;
 
 class NativeSQLPredicate<T, R, I> implements Predicate<T, R, I> {
 
+	private NativeSQL nativeSQL;
+	private MethodRecordProxy<T> proxy;
 	private String name;
-	private List<StringBuilder> conditions;
-	private List<String> parents;
 	private NativeSQLResult result;
+
+	private String alias;
+	private HolderInt level;
+	private List<String> parents;
 	
-	public NativeSQLPredicate(String name, NativeSQLResult result) {
+	private List<StringBuilder> conditions;
+	
+	public NativeSQLPredicate(NativeSQL nativeSQL, MethodRecordProxy<T> proxy, 
+			String name, NativeSQLResult result) {
+		this.nativeSQL = nativeSQL;
+		this.proxy = proxy;
+		
 		this.name = name;
 		this.result = result;
 		this.conditions = new ArrayList<StringBuilder>();
+	}
+	
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+	
+	public void setLevel(HolderInt level) {
+		this.level = level;
 	}
 	
 	public void setParents(List<String> parents) {
@@ -98,6 +122,51 @@ class NativeSQLPredicate<T, R, I> implements Predicate<T, R, I> {
 	public I isNotNull() {
 		conditions.add(new StringBuilder(name).append(" is not null "));
 		return null;
+	}
+	
+	@Override
+	public <J> I in(Class<J> clazz, Join<J, T> action) {
+		NativeSQLResult result = toSQL(clazz, action);
+		
+		conditions.add(new StringBuilder(name)
+			.append(" in (")
+			.append(result.sql())
+			.append(")")
+		);
+		
+		this.result.addResult(result);
+		
+		return null;
+	}
+
+	@Override
+	public <J> I notIn(Class<J> clazz, Join<J, T> action) {
+		NativeSQLResult result = toSQL(clazz, action);
+		
+		conditions.add(new StringBuilder(name)
+			.append(" not in (")
+			.append(result.sql())
+			.append(")")
+		);
+		
+		this.result.addResult(result);
+		
+		return null;
+	}
+	
+	private <J> NativeSQLResult toSQL(Class<J> clazz, Join<J, T> action) {
+		Query<J> q = new QueryBuilder().from(clazz);
+		QueryImpl<J> qi = (QueryImpl<J>)q;
+		
+		HolderInt newLevel = new HolderInt();
+		newLevel.value = (level.value + 1) * 1000;
+		
+		this.proxy.clear();
+		action.accept(q, this.proxy.getProxy());
+		
+		List<String> parentsTemp = nativeSQL.createParents(alias, proxy);
+		
+		return nativeSQL.convert(qi, parentsTemp, newLevel);
 	}
 
 }

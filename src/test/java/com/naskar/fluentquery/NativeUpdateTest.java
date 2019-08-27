@@ -18,7 +18,7 @@ public class NativeUpdateTest {
 				.value(i -> i.getName()).set("teste")
 				.value(i -> i.getMinBalance()).set(10.2)
 			.where(i -> i.getId()).eq(1L)
-			.to(new NativeSQLUpdate());
+			.to(new NativeSQLUpdate().setWithoutAlias(false));
 		
 		String actual = result.sql();
 		
@@ -37,7 +37,7 @@ public class NativeUpdateTest {
 			.entity(Customer.class)
 				.value(i -> i.getName()).set("teste")
 				.value(i -> i.getMinBalance()).set(10.2)
-			.to(new NativeSQLUpdate());
+			.to(new NativeSQLUpdate().setWithoutAlias(false));
 		
 		String actual = result.sql();
 		

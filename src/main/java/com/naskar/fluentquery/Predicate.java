@@ -19,5 +19,9 @@ public interface Predicate<T, R, I> {
 	I isNull();
 	
 	I isNotNull();
+	
+	<J> I in(Class<J> clazz, Join<J, T>	 action);
+	
+	<J> I notIn(Class<J> clazz, Join<J, T> action);
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.naskar.fluentquery.impl.Convention;
+import com.naskar.fluentquery.impl.HolderInt;
 import com.naskar.fluentquery.impl.MethodRecordProxy;
 import com.naskar.fluentquery.impl.PredicateImpl;
 import com.naskar.fluentquery.impl.PredicateImpl.Type;
@@ -11,13 +12,19 @@ import com.naskar.fluentquery.impl.PredicateImpl.Type;
 public class NativeSQLWhereImpl {
 	
 	private Convention convention;
+	private NativeSQL nativeSQL;
 	
+	public NativeSQLWhereImpl(NativeSQL nativeSQL) {
+		this.nativeSQL = nativeSQL;
+	}
+
 	public void setConvention(Convention convention) {
 		this.convention = convention;
 	}
 	
 	public <T, I, B> void convertWhere(
-			StringBuilder sb, 
+			StringBuilder sb,
+			HolderInt level,
 			String alias,
 			MethodRecordProxy<T> proxy,
 			List<String> parents,
@@ -36,7 +43,7 @@ public class NativeSQLWhereImpl {
 				@SuppressWarnings("unchecked")
 				PredicateProvider<T, B> q = ((PredicateProvider<T, B>)p.getProperty().apply(null));
 				
-				convertWhere(sbSpec, alias, proxy, parents, q.getPredicates(), result);
+				convertWhere(sbSpec, level, alias, proxy, parents, q.getPredicates(), result);
 				if(sbSpec.length() > 0) {
 					sbSpec.insert(0, "(");
 					sbSpec.append(")");
@@ -54,7 +61,11 @@ public class NativeSQLWhereImpl {
 				
 				p.getActions().forEach(action -> {
 					
-					NativeSQLPredicate<T, Object, I> predicate = new NativeSQLPredicate<T, Object, I>(name, result);
+					NativeSQLPredicate<T, Object, I> predicate = 
+						new NativeSQLPredicate<T, Object, I>(nativeSQL, proxy, name, result);
+					
+					predicate.setAlias(alias);
+					predicate.setLevel(level);
 					predicate.setParents(parents);
 					action.accept(predicate);
 					

@@ -13,11 +13,15 @@ public class NativeSQLResult {
 	private List<Object> values;
 	private int i;
 	
-	public NativeSQLResult() {
-		this.i = -1;
+	public NativeSQLResult(Integer level) {
+		this.i = level;
 		this.params = new HashMap<String, Object>();
 		this.names = new ArrayList<String>();
 		this.values = new ArrayList<Object>();
+	}
+	
+	public NativeSQLResult() {
+		this(-1);
 	}
 	
 	public NativeSQLResult sql(String value) {
@@ -57,6 +61,12 @@ public class NativeSQLResult {
 		names.add(k);
 		values.add(value);
 		return k;
+	}
+
+	void addResult(NativeSQLResult result) {
+		this.params.putAll(result.params);
+		this.names.addAll(result.names);
+		this.values.addAll(result.values);
 	}
 
 }
