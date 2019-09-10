@@ -130,11 +130,9 @@ class NativeSQLPredicate<T, R, I> implements Predicate<T, R, I> {
 		
 		conditions.add(new StringBuilder(name)
 			.append(" in (")
-			.append(result.sql())
+			.append(this.result.addResult(result))
 			.append(")")
 		);
-		
-		this.result.addResult(result);
 		
 		return null;
 	}
@@ -145,11 +143,9 @@ class NativeSQLPredicate<T, R, I> implements Predicate<T, R, I> {
 		
 		conditions.add(new StringBuilder(name)
 			.append(" not in (")
-			.append(result.sql())
+			.append(this.result.addResult(result))
 			.append(")")
 		);
-		
-		this.result.addResult(result);
 		
 		return null;
 	}

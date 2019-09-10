@@ -63,10 +63,18 @@ public class NativeSQLResult {
 		return k;
 	}
 
-	void addResult(NativeSQLResult result) {
-		this.params.putAll(result.params);
-		this.names.addAll(result.names);
-		this.values.addAll(result.values);
+	String addResult(NativeSQLResult result) {
+		String temp = result.sql();
+		
+		for(int i = 0; i < result.values.size(); i++) {
+			
+			String newP = this.add(result.values.get(i));
+			String oldP = result.names.get(i);
+			temp = temp.replaceAll(":" + oldP, ":" + newP);
+			
+		}
+		
+		return temp;
 	}
 
 }
