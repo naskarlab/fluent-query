@@ -95,6 +95,10 @@ public class NativeSQL implements QueryConverter<NativeSQLResult> {
 			sb.append(parts.getOrderBy());
 		}
 		
+		if(queryImpl.getForUpdate()) {
+			sb.append(" for update ");
+		}
+		
 		return result.sql(sb.toString());
 	}
 	

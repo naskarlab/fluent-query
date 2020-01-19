@@ -24,4 +24,6 @@ public interface Query<T> extends Whereable<T, Query<T>> {
 	
 	<R> OrderBy<Query<T>> orderBy(Function<T, R> property);
 	
+	<R> Query<T> forUpdate();
+	
 }

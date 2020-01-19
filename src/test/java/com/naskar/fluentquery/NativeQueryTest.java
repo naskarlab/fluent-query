@@ -24,6 +24,20 @@ public class NativeQueryTest {
 	}
 	
 	@Test
+	public void testSelectForUpdate() {
+		String expected = "select e0.* from Customer e0 for update ";
+		
+		String actual = new QueryBuilder()
+			.from(Customer.class)
+			.forUpdate()
+			.to(new NativeSQL())
+			.sql()
+			;
+		
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
 	public void testOrderBy() {
 		String expected = "select e0.* from Customer e0 order by e0.id, e0.name desc";
 		

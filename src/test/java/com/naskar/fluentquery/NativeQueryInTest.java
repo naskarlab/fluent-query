@@ -1,5 +1,7 @@
 package com.naskar.fluentquery;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,8 +34,8 @@ public class NativeQueryInTest {
 	public void testSelectParent() {
 		String expected = 
 			"select e0.* from Account e0 where e0.id not in "
-			+ "(select e1000.accountId from Operation e1000 where e1000.amount > e0.balance and e1000.amount > :p1000)"
-			+ " and e0.balance > :p0";
+			+ "(select e1000.accountId from Operation e1000 where e1000.amount > e0.balance and e1000.amount > :p0)"
+			+ " and e0.balance > :p1";
 		
 		NativeSQLResult result = new QueryBuilder()
 			.from(Account.class)
@@ -48,8 +50,9 @@ public class NativeQueryInTest {
 		String actual = result.sql();
 		
 		Assert.assertEquals(expected, actual);
-		Assert.assertEquals(result.params().get("p0"), 2.5);
-		Assert.assertEquals(result.params().get("p1000"), 1.6);
+		Assert.assertEquals(result.values(),  Arrays.asList(1.6, 2.5));
+		Assert.assertEquals(result.params().get("p0"), 1.6);
+		Assert.assertEquals(result.params().get("p1"), 2.5);
 	}
 	
 }

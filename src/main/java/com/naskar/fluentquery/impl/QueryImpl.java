@@ -21,6 +21,7 @@ public class QueryImpl<T>
 	private List<Function<T, ?>> selects;
 	private Map<Function<T, ?>, Consumer<Select>> selectFunctions;
 	private Boolean withoutSelect;
+	private Boolean forUpdate;
 	private List<Tuple<QueryImpl<?>, Consumer<T>>> froms;
 	private List<GroupByImpl> groups;
 	private List<OrderByImpl<?>> orders;
@@ -31,6 +32,7 @@ public class QueryImpl<T>
 		this.selects = new ArrayList<Function<T, ?>>();
 		this.selectFunctions = new HashMap<Function<T, ?>, Consumer<Select>>();
 		this.withoutSelect = false;
+		this.forUpdate = false;
 		this.groups = new ArrayList<GroupByImpl>();
 		this.orders = new ArrayList<OrderByImpl<?>>();
 		this.froms = new ArrayList<Tuple<QueryImpl<?>, Consumer<T>>>();
@@ -50,6 +52,10 @@ public class QueryImpl<T>
 	
 	public Boolean getWithoutSelect() {
 		return withoutSelect;
+	}
+	
+	public Boolean getForUpdate() {
+		return forUpdate;
 	}
 	
 	public List<GroupByImpl> getGroups() {
@@ -85,6 +91,12 @@ public class QueryImpl<T>
 	@Override
 	public <R> Query<T> withoutSelect() {
 		withoutSelect = true;
+		return this;
+	}
+	
+	@Override
+	public <R> Query<T> forUpdate() {
+		forUpdate = true;
 		return this;
 	}
 	
