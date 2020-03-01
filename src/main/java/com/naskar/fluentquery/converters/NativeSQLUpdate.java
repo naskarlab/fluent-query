@@ -24,6 +24,7 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 	private NativeSQLWhereImpl nativeWhereImpl;
 	
 	private boolean withoutAlias;
+	private boolean withoutTableName;
 	
 	public NativeSQLUpdate(Convention convention) {
 		this.convention = convention;
@@ -32,10 +33,16 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 		this.nativeWhereImpl = new NativeSQLWhereImpl(this.nativeSQL);
 		this.nativeWhereImpl.setConvention(convention);
 		this.withoutAlias = true;
+		this.withoutTableName = false;
 	}
 	
 	public NativeSQLUpdate setWithoutAlias(boolean withoutAlias) {
 		this.withoutAlias = withoutAlias;
+		return this;
+	}
+	
+	public NativeSQLUpdate setWithoutTableName(boolean withoutTableName) {
+		this.withoutTableName = withoutTableName;
 		return this;
 	}
 	
@@ -65,7 +72,9 @@ public class NativeSQLUpdate implements UpdateConverter<NativeSQLResult> {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("update ");
-		sb.append(parts.getTable());
+		if(!withoutTableName) {
+			sb.append(parts.getTable());
+		}
 		
 		sb.append(" set ");
 		sb.append(parts.getSet());

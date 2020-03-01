@@ -63,7 +63,7 @@ public class NativeSQLResult {
 		return k;
 	}
 
-	String addResult(NativeSQLResult result) {
+	public String addResult(NativeSQLResult result) {
 		String temp = result.sql();
 		
 		for(int i = 0; i < result.values.size(); i++) {
