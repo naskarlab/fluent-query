@@ -231,7 +231,7 @@ public void testMultipleInsert() {
 ### 0.3.1
 	- Included IN/NOT IN
 	- Included FOR UPDATE for SELECTs
-	- Included JPA Metamodel supporte, ie, now it support any JPA provider, beyond the JDBC and MongoDB.
+	- Included JPA Metamodel support, ie, now it support any JPA provider, beyond the JDBC and MongoDB.
 
 ### 0.3.0 
 	- MappingValueProvider included for fill entities using unstructured datas.
