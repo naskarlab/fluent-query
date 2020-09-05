@@ -14,6 +14,7 @@ Create Queries, Inserts, Updates e Deletes using only POJO classes.
 ## Mapping
 
 * JPA EclipseLink: [Fluent Query EclipseLink](https://github.com/naskarlab/fluent-query-eclipselink)
+* JPA:             [Fluent Query JPA - Any Provider](https://github.com/naskarlab/fluent-query-jpa-metamodel)
 * JDBC Drivers:    [Fluent Query JDBC](https://github.com/naskarlab/fluent-query-jdbc)
 * MongoDB:         [Fluent Query MongoDB](https://github.com/naskarlab/fluent-query-mongodb)
 
@@ -226,6 +227,11 @@ public void testMultipleInsert() {
 
 
 ## Releases
+
+### 0.3.1
+	- Included IN/NOT IN
+	- Included FOR UPDATE for SELECTs
+	- Included JPA Metamodel supporte, ie, now it support any JPA provider, beyond the JDBC and MongoDB.
 
 ### 0.3.0 
 	- MappingValueProvider included for fill entities using unstructured datas.
