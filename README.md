@@ -18,6 +18,13 @@ Create Queries, Inserts, Updates e Deletes using only POJO classes.
 * JDBC Drivers:    [Fluent Query JDBC](https://github.com/naskarlab/fluent-query-jdbc)
 * MongoDB:         [Fluent Query MongoDB](https://github.com/naskarlab/fluent-query-mongodb)
 
+## Kotlin Support
+
+See examples in:
+
+* [Fluent Query JPA Kotlin Examples](https://github.com/naskarlab/fluent-query-kotlin-example)
+ 
+
 
 ## Examples
 
