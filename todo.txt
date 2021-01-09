@@ -1,0 +1,8 @@
+fluent-query 
+
+select * from pricetb 
+order by createdtime desc
+offset 500000 rows 
+fetch next 10 rows only;
+
+
