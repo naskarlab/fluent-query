@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.naskar</groupId>
+	<groupId>${customGroupId}</groupId>
 	<artifactId>fluent-query</artifactId>
 	<packaging>jar</packaging>
 	<version>0.3.1</version>
@@ -9,6 +9,7 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<customGroupId>com.naskar</customGroupId>
 	</properties>
 	
 	<dependencies>
@@ -42,36 +43,4 @@
 		</plugins>
 	</build>
 	
-    <profiles>
-		<profile>
-            <id>gitlab</id>
-            <build>
-                <plugins>
-					<plugin>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.8.2</version>
-						<executions>
-							<execution>
-								<id>deploy-file</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>deploy-file</goal>
-								</goals>
-								<configuration>
-									<file>${project.build.finalName}.${project.packaging}</file>
-									<pomFile>pom.xml</pomFile>
-									<url>https://gitlab.com/api/v4/projects/23719062/packages/maven</url>
-									<groupId>com.github.naskarlab</groupId>
-									<artifactId>${project.artifactId}</artifactId>
-									<version>${project.version}</version>
-									<packaging>${project.packaging}</packaging>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-		
 </project>
