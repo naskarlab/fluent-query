@@ -52,16 +52,6 @@
 						<version>2.8.2</version>
 						<executions>
 							<execution>
-								<id>deploy</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>deploy</goal>
-								</goals>
-								<configuration>
-									<altDeploymentRepository>gitlab::default::https://gitlab.com/api/v4/projects/23719062/packages/maven</altDeploymentRepository>
-								</configuration>
-							</execution>
-							<execution>
 								<id>deploy-file</id>
 								<phase>deploy</phase>
 								<goals>
