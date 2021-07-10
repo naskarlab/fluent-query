@@ -20,8 +20,7 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to Packages Maven
-      run: mvn deploy -s .github/workflows/settings.xml
+      run: mvn deploy -s .github/workflows/settings.xml -Durl=GITLAB_URL -DrepositoryId=gitlab
       env:
-        SERVER_ID: ${{ secrets.SERVER_ID }}
-        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        GITLAB_URL: https://gitlab.com/api/v4/projects/23719062/packages/maven
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
