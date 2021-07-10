@@ -19,7 +19,13 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-    - name: Publish to Packages Maven
+    - name: Publish to Packages Maven Default
+      run: mvn deploy -s .github/workflows/settings.xml -DaltDeploymentRepository=gitlab::default::$GITLAB_URL
+      env:
+        GITLAB_URL: https://gitlab.com/api/v4/projects/23719062/packages/maven
+        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        
+    - name: Publish to Packages Maven Custom GroupId
       run: mvn deploy -s .github/workflows/settings.xml -DgroupId=$GITLAB_GROUPID -DaltDeploymentRepository=gitlab::default::$GITLAB_URL
       env:
         GITLAB_GROUPID: com.github.naskarlab
