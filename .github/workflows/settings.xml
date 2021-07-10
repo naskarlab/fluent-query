@@ -5,9 +5,9 @@
 
   <servers>
     <server>
-      <id>${SERVER_ID}</id>
-      <username>${SERVER_USERNAME}</username>
-      <password>${SERVER_PASSWORD}</password>
+      <id>${env.SERVER_ID}</id>
+      <username>${env.SERVER_USERNAME}</username>
+      <password>${env.SERVER_PASSWORD}</password>
     </server>
   </servers>
 </settings>
