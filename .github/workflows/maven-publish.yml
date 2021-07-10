@@ -20,6 +20,6 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to Packages Maven Default
-      run: mvn deploy -s .github/workflows/settings.xml -P gitlab
+      run: mvn deploy -s .github/workflows/settings.xml -P gitlab -DpomFile=pom.xml
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
