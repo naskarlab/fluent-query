@@ -5,9 +5,15 @@
 
   <servers>
     <server>
-      <id>${env.SERVER_ID}</id>
-      <username>${env.SERVER_USERNAME}</username>
-      <password>${env.SERVER_PASSWORD}</password>
+      <id>gitlab</id>
+      <configuration>
+        <httpHeaders>
+          <property>
+            <name>Deploy-Token</name>
+            <value>${env.GITLAB_TOKEN}</value>
+          </property>
+        </httpHeaders>
+      </configuration>
     </server>
   </servers>
 </settings>
