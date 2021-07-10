@@ -20,11 +20,6 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to Packages Maven Default
-      run: mvn deploy:deploy -s .github/workflows/settings.xml -P gitlab
-      env:
-        GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-        
-    - name: Publish to Packages Maven Custom
-      run: mvn deploy:deploy-file -s .github/workflows/settings.xml -P gitlab
+      run: mvn deploy -s .github/workflows/settings.xml -P gitlab
       env:
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
