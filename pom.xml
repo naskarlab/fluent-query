@@ -4,7 +4,7 @@
 	<groupId>${customGroupId}</groupId>
 	<artifactId>fluent-query</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<name>fluent-query</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
