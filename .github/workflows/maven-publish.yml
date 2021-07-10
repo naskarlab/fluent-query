@@ -28,8 +28,8 @@ jobs:
     - name: Publish to Packages Maven Custom GroupId
       run: |
          export FILE=`ls target/*.jar`
-         mvn deploy:deploy-file -s .github/workflows/settings.xml -DpomFile=pom.xml -Dfile=$FILE -DgroupId=$GITLAB_GROUPID \
-            -Durl=$GITLAB_URL
+         mvn deploy:deploy-file -s .github/workflows/settings.xml -DpomFile=pom.xml -Dfile=$FILE \
+            -DgroupId=$GITLAB_GROUPID -Durl=$GITLAB_URL -DrepositoryId=gitlab
       env:
         GITLAB_GROUPID: com.github.naskarlab
         GITLAB_URL: https://gitlab.com/api/v4/projects/23719062/packages/maven
