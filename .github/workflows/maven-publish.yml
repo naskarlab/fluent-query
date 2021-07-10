@@ -20,17 +20,11 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Publish to Packages Maven Default
-      run: mvn deploy -s .github/workflows/settings.xml -DaltDeploymentRepository=gitlab::default::$GITLAB_URL
+      run: mvn deploy:deploy -s .github/workflows/settings.xml -P gitlab
       env:
-        GITLAB_URL: https://gitlab.com/api/v4/projects/23719062/packages/maven
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         
-    - name: Publish to Packages Maven Custom GroupId
-      run: |
-         export FILE=`ls target/*.jar`
-         mvn deploy:deploy-file -s .github/workflows/settings.xml -DpomFile=pom.xml -Dfile=$FILE \
-            -DgroupId=$GITLAB_GROUPID -Durl=$GITLAB_URL -DrepositoryId=gitlab
+    - name: Publish to Packages Maven Custom
+      run: mvn deploy:deploy-file -s .github/workflows/settings.xml -P gitlab
       env:
-        GITLAB_GROUPID: com.github.naskarlab
-        GITLAB_URL: https://gitlab.com/api/v4/projects/23719062/packages/maven
         GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
