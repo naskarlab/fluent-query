@@ -231,7 +231,7 @@ public void testMultipleInsert() {
 <dependency>
     <groupId>com.github.naskarlab</groupId>
     <artifactId>fluent-query</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.3</version>
 </dependency>
 
 ```
