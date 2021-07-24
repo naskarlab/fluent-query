@@ -222,6 +222,10 @@ public void testMultipleInsert() {
 	    <id>jitpack.io</id>
 	    <url>https://jitpack.io</url>
 	</repository>
+	<repository>
+	    <id>gitlab-maven</id>
+	    <url>https://gitlab.com/api/v4/projects/23719062/packages/maven</url>
+	</repository>
 </repositories>
 
 <dependency>
@@ -234,6 +238,13 @@ public void testMultipleInsert() {
 
 
 ## Releases
+
+### 0.3.3
+	Sync packages on jitpack and gitlab.
+
+### 0.3.2
+	Github actions for publish on gitlab packages maven repository
+	[GitLab Packages](https://gitlab.com/naskarlab/maven-repository/-/packages/2311139)
 
 ### 0.3.1
 	- Included IN/NOT IN
