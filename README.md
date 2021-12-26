@@ -24,7 +24,11 @@ See examples in:
 
 * [Fluent Query JPA Kotlin Examples](https://github.com/naskarlab/fluent-query-kotlin-example)
  
+## Spring Sample
 
+See examples in:
+
+* [Spring Fluent Query Sample](https://github.com/naskarlab/spring-fluent-query-sample)
 
 ## Examples
 
